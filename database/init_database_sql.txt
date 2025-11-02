@@ -1,0 +1,123 @@
+-- 使用银行系统数据库
+USE bank_system;
+
+-- 创建用户表
+CREATE TABLE IF NOT EXISTS Users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    id_card VARCHAR(18) UNIQUE NOT NULL,
+    phone VARCHAR(11) NOT NULL,
+    address TEXT,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建储蓄卡表
+CREATE TABLE IF NOT EXISTS Cards (
+    card_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    card_number VARCHAR(19) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    balance DECIMAL(15,2) DEFAULT 0.00,
+    status ENUM('active', 'inactive', 'cancelled') DEFAULT 'active',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- 创建交易记录表
+CREATE TABLE IF NOT EXISTS Transactions (
+    transaction_id INT PRIMARY KEY AUTO_INCREMENT,
+    card_id INT NOT NULL,
+    type ENUM('deposit', 'withdraw', 'open', 'close') NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    balance_after DECIMAL(15,2) NOT NULL,
+    description TEXT,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (card_id) REFERENCES Cards(card_id) ON DELETE CASCADE
+);
+
+-- 清空现有
+DELETE FROM Transactions;
+DELETE FROM Cards;
+DELETE FROM Users;
+ALTER TABLE Users AUTO_INCREMENT = 1;
+ALTER TABLE Cards AUTO_INCREMENT = 1;
+ALTER TABLE Transactions AUTO_INCREMENT = 1;
+
+-- 插入测试用户
+INSERT INTO Users (name, id_card, phone, address) VALUES 
+('测试用户_张三', '110101199901011001', '13800138001', '北京市测试区测试街道1号'),
+('测试用户_李四', '110101199902021002', '13800138002', '北京市测试区测试街道2号'),
+('测试用户_王五', '110101199903031003', '13800138003', '北京市测试区测试街道3号'),
+('测试用户_赵六', '110101199904041004', '13800138004', '北京市测试区测试街道4号'),
+('测试用户_钱七', '110101199905051005', '13800138005', '北京市测试区测试街道5号');
+
+-- 插入测试储蓄卡 - 卡号使用明显模式，密码都是123456
+INSERT INTO Cards (user_id, card_number, password_hash, balance, status) VALUES 
+(1, '6222020111111111001', MD5('123456'), 5000.00, 'active'),
+(2, '6222020222222222002', MD5('123456'), 8000.00, 'active'),
+(3, '6222020333333333003', MD5('123456'), 3000.00, 'active'),
+(4, '6222020444444444004', MD5('123456'), 10000.00, 'active'),
+(5, '6222020555555555005', MD5('123456'), 2000.00, 'inactive');  -- 一张冻结卡用于测试
+
+-- 插入测试交易记录 - 包含各种业务场景
+INSERT INTO Transactions (card_id, type, amount, balance_after, description) VALUES 
+-- 用户1的交易记录
+(1, 'open', 5000.00, 5000.00, '开户存款_测试'),
+(1, 'deposit', 1000.00, 6000.00, '现金存款_测试'),
+(1, 'withdraw', 500.00, 5500.00, 'ATM取款_测试'),
+(1, 'deposit', 200.00, 5700.00, '转账存入_测试'),
+
+-- 用户2的交易记录
+(2, 'open', 8000.00, 8000.00, '开户存款_测试'),
+(2, 'withdraw', 2000.00, 6000.00, '大额取款_测试'),
+(2, 'deposit', 1500.00, 7500.00, '工资存入_测试'),
+(2, 'withdraw', 500.00, 7000.00, '日常消费_测试'),
+
+-- 用户3的交易记录
+(3, 'open', 3000.00, 3000.00, '开户存款_测试'),
+(3, 'deposit', 500.00, 3500.00, '零星存款_测试'),
+(3, 'withdraw', 1000.00, 2500.00, '紧急取款_测试'),
+
+-- 用户4的交易记录（只有开户）
+(4, 'open', 10000.00, 10000.00, '大额开户_测试'),
+
+-- 用户5的交易记录（冻结账户）
+(5, 'open', 2000.00, 2000.00, '开户存款_测试'),
+(5, 'withdraw', 500.00, 1500.00, '正常取款_测试');
+
+
+
+
+-- 验证数据插入结果
+SELECT '=== 用户表数据 ===' AS '';
+SELECT * FROM Users;
+
+SELECT '=== 储蓄卡表数据 ===' AS '';
+SELECT card_id, user_id, card_number, balance, status FROM Cards;
+
+SELECT '=== 交易记录统计 ===' AS '';
+SELECT 
+    c.card_number,
+    u.name,
+    COUNT(t.transaction_id) as transaction_count,
+    MAX(t.create_time) as last_transaction
+FROM Cards c
+JOIN Users u ON c.user_id = u.user_id
+LEFT JOIN Transactions t ON c.card_id = t.card_id
+GROUP BY c.card_id;
+
+SELECT '=== 最新5笔交易 ===' AS '';
+SELECT 
+    t.transaction_id,
+    c.card_number,
+    u.name,
+    t.type,
+    t.amount,
+    t.balance_after,
+    t.description,
+    t.create_time
+FROM Transactions t
+JOIN Cards c ON t.card_id = c.card_id
+JOIN Users u ON c.user_id = u.user_id
+ORDER BY t.create_time DESC
+LIMIT 5;

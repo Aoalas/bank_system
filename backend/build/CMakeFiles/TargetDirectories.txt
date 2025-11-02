@@ -1,0 +1,3 @@
+/home/eo/bank_system/backend/build/CMakeFiles/bank_server.dir
+/home/eo/bank_system/backend/build/CMakeFiles/edit_cache.dir
+/home/eo/bank_system/backend/build/CMakeFiles/rebuild_cache.dir
