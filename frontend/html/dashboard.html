@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户面板 - 银行储蓄卡管理系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- 顶部导航 -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1 class="logo">银行储蓄卡管理系统</h1>
+                <div class="user-info">
+                    <span class="welcome-text">欢迎，<span id="userName">加载中...</span></span>
+                    <span class="card-number" id="cardNumberDisplay"></span>
+                    <button class="logout-btn" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="dashboard-main">
+            <!-- 余额显示区域 -->
+            <section class="balance-section">
+                <div class="balance-card">
+                    <h2 class="balance-title">账户余额</h2>
+                    <div class="balance-amount" id="balanceDisplay">¥ 0.00</div>
+                    <div class="balance-info">
+                        <span>卡号: <span id="displayCardNumber">-</span></span>
+                        <span>状态: <span class="status-active">正常</span></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 功能操作区域 -->
+            <section class="actions-section">
+                <h2 class="section-title">账户操作</h2>
+                <div class="actions-grid">
+                    <!-- 存款功能 -->
+                    <div class="action-card" onclick="showDepositModal()">
+                        <div class="action-icon">💰</div>
+                        <h3>存款</h3>
+                        <p>向您的账户存入资金</p>
+                        <div class="action-hint">点击存款</div>
+                    </div>
+
+                    <!-- 取款功能 -->
+                    <div class="action-card" onclick="showWithdrawModal()">
+                        <div class="action-icon">💳</div>
+                        <h3>取款</h3>
+                        <p>从账户中取出资金</p>
+                        <div class="action-hint">点击取款</div>
+                    </div>
+
+                    <!-- 交易记录 -->
+                    <div class="action-card" onclick="showTransactionHistory()">
+                        <div class="action-icon">📊</div>
+                        <h3>交易记录</h3>
+                        <p>查看账户交易历史</p>
+                        <div class="action-hint">点击查看</div>
+                    </div>
+
+                    <!-- 账户信息 -->
+                    <div class="action-card" onclick="showAccountInfo()">
+                        <div class="action-icon">👤</div>
+                        <h3>账户信息</h3>
+                        <p>查看个人账户详情</p>
+                        <div class="action-hint">点击查看</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 最近交易区域 -->
+            <section class="recent-transactions">
+                <h2 class="section-title">最近交易</h2>
+                <div class="transactions-list" id="recentTransactions">
+                    <div class="loading-text">加载交易记录中...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 存款模态框 -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>存款操作</h3>
+                <span class="close" onclick="closeDepositModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="depositAmount">存款金额 (元):</label>
+                    <input type="number" id="depositAmount" placeholder="请输入存款金额" min="0.01" step="0.01">
+                </div>
+                <div class="current-balance">
+                    当前余额: <span id="currentBalanceDeposit">¥ 0.00</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDepositModal()">取消</button>
+                <button class="btn-primary" onclick="processDeposit()">确认存款</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 取款模态框 -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>取款操作</h3>
+                <span class="close" onclick="closeWithdrawModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="withdrawAmount">取款金额 (元):</label>
+                    <input type="number" id="withdrawAmount" placeholder="请输入取款金额" min="0.01" step="0.01">
+                </div>
+                <div class="current-balance">
+                    当前余额: <span id="currentBalanceWithdraw">¥ 0.00</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeWithdrawModal()">取消</button>
+                <button class="btn-primary" onclick="processWithdraw()">确认取款</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 交易记录模态框 -->
+    <div id="historyModal" class="modal large-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>交易记录</h3>
+                <span class="close" onclick="closeHistoryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="transactions-table-container">
+                    <table class="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>类型</th>
+                                <th>金额</th>
+                                <th>余额</th>
+                                <th>描述</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            <tr>
+                                <td colspan="5" class="loading-text">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeHistoryModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 消息提示 -->
+    <div id="message" class="message"></div>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

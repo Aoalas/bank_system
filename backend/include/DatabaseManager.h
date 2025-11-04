@@ -118,4 +118,10 @@ public:
     DatabaseManager(const DatabaseManager&) = delete;
     DatabaseManager& operator=(const DatabaseManager&) = delete;
     
+    ~DatabaseManager() {
+        if (connection) {
+            connection->close();
+        }
+    }
+    
 };
