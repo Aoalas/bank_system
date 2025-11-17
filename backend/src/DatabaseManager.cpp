@@ -337,3 +337,101 @@ bool DatabaseManager::withdraw(const std::string& cardNumber, double amount) {
         return false;
     }
 }
+
+// 检查卡号是否存在
+bool DatabaseManager::isCardNumberExists(const std::string& cardNumber) {
+    try {
+        std::string query = "SELECT card_id FROM Cards WHERE card_number = ?";
+        std::unique_ptr<sql::PreparedStatement> pstmt(connection->prepareStatement(query));
+        pstmt->setString(1, cardNumber);
+
+        std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+        return res->next(); // 如果存在记录返回true
+    } catch (sql::SQLException& e) {
+        std::cerr << "检查卡号存在错误: " << e.what() << std::endl;
+        return true; // 出错时默认认为存在，避免重复创建
+    }
+}
+
+// 开户/注册功能
+bool DatabaseManager::createAccount(const std::string& name, const std::string& idCard,
+                                  const std::string& phone, const std::string& address,
+                                  const std::string& cardNumber, const std::string& password,
+                                  double initialDeposit) {
+    try {
+        connection->setAutoCommit(false);
+
+        // 1. 检查卡号是否已存在
+        if (isCardNumberExists(cardNumber)) {
+            throw sql::SQLException("卡号已存在");
+        }
+
+        // 2. 检查身份证是否已存在
+        std::string checkIdCard = "SELECT user_id FROM Users WHERE id_card = ?";
+        std::unique_ptr<sql::PreparedStatement> pstmtCheck(connection->prepareStatement(checkIdCard));
+        pstmtCheck->setString(1, idCard);
+        std::unique_ptr<sql::ResultSet> resCheck(pstmtCheck->executeQuery());
+        if (resCheck->next()) {
+            throw sql::SQLException("身份证号已注册");
+        }
+
+        // 3. 插入用户信息
+        std::string insertUser =
+            "INSERT INTO Users (name, id_card, phone, address) VALUES (?, ?, ?, ?)";
+        std::unique_ptr<sql::PreparedStatement> pstmtUser(connection->prepareStatement(insertUser));
+        pstmtUser->setString(1, name);
+        pstmtUser->setString(2, idCard);
+        pstmtUser->setString(3, phone);
+        pstmtUser->setString(4, address);
+        pstmtUser->executeUpdate();
+
+        // 4. 获取新创建的用户ID
+        std::string getUserId = "SELECT LAST_INSERT_ID() as user_id";
+        std::unique_ptr<sql::PreparedStatement> pstmtUserId(connection->prepareStatement(getUserId));
+        std::unique_ptr<sql::ResultSet> resUserId(pstmtUserId->executeQuery());
+        resUserId->next();
+        int userId = resUserId->getInt("user_id");
+
+        // 5. 插入银行卡信息
+        std::string insertCard =
+            "INSERT INTO Cards (user_id, card_number, password_hash, balance) VALUES (?, ?, MD5(?), ?)";
+        std::unique_ptr<sql::PreparedStatement> pstmtCard(connection->prepareStatement(insertCard));
+        pstmtCard->setInt(1, userId);
+        pstmtCard->setString(2, cardNumber);
+        pstmtCard->setString(3, password);
+        pstmtCard->setDouble(4, initialDeposit);
+        pstmtCard->executeUpdate();
+
+        // 6. 获取新创建的卡ID
+        std::string getCardId = "SELECT LAST_INSERT_ID() as card_id";
+        std::unique_ptr<sql::PreparedStatement> pstmtCardId(connection->prepareStatement(getCardId));
+        std::unique_ptr<sql::ResultSet> resCardId(pstmtCardId->executeQuery());
+        resCardId->next();
+        int cardId = resCardId->getInt("card_id");
+
+        // 7. 记录开户交易
+        std::string insertTransaction =
+            "INSERT INTO Transactions (card_id, type, amount, balance_after, description) VALUES (?, 'open', ?, ?, ?)";
+        std::unique_ptr<sql::PreparedStatement> pstmtTrans(connection->prepareStatement(insertTransaction));
+        pstmtTrans->setInt(1, cardId);
+        pstmtTrans->setDouble(2, initialDeposit);
+        pstmtTrans->setDouble(3, initialDeposit);
+        pstmtTrans->setString(4, "开户存款");
+        pstmtTrans->executeUpdate();
+
+        connection->commit();
+        connection->setAutoCommit(true);
+
+        std::cout << "开户成功: 姓名=" << name << " 卡号=" << cardNumber << " 初始金额=" << initialDeposit << std::endl;
+        return true;
+
+    } catch (sql::SQLException& e) {
+        try {
+            connection->rollback();
+            connection->setAutoCommit(true);
+        } catch (...) {}
+
+        std::cerr << "开户错误: " << e.what() << std::endl;
+        return false;
+    }
+}

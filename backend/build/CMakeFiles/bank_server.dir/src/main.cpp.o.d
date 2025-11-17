@@ -1,6 +1,6 @@
 CMakeFiles/bank_server.dir/src/main.cpp.o: \
- /home/eo/bank_system/backend/src/main.cpp /usr/include/stdc-predef.h \
- /home/eo/bank_system/backend/src/../crow_all.h \
+ /home/aoalas/bank_system/backend/src/main.cpp /usr/include/stdc-predef.h \
+ /home/aoalas/bank_system/backend/src/../crow_all.h \
  /usr/include/c++/13/unordered_map \
  /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
@@ -1618,7 +1618,7 @@ CMakeFiles/bank_server.dir/src/main.cpp.o: \
  /usr/include/boost/date_time/filetime_functions.hpp \
  /usr/include/boost/date_time/posix_time/time_parsers.hpp \
  /usr/include/c++/13/thread /usr/include/c++/13/bits/this_thread_sleep.h \
- /home/eo/bank_system/backend/src/../include/DatabaseManager.h \
+ /home/aoalas/bank_system/backend/src/../include/DatabaseManager.h \
  /usr/include/mysql_driver.h /usr/include/boost/scoped_ptr.hpp \
  /usr/include/boost/smart_ptr/scoped_ptr.hpp \
  /usr/include/cppconn/driver.h /usr/include/cppconn/connection.h \

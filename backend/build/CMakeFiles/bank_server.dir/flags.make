@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB
 
-CXX_INCLUDES = -I/home/eo/bank_system/backend/include
+CXX_INCLUDES = -I/home/aoalas/bank_system/backend/include
 
 CXX_FLAGS = -std=gnu++14
 

@@ -1,7 +1,7 @@
 CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o: \
- /home/eo/bank_system/backend/src/DatabaseManager.cpp \
+ /home/aoalas/bank_system/backend/src/DatabaseManager.cpp \
  /usr/include/stdc-predef.h \
- /home/eo/bank_system/backend/src/../include/DatabaseManager.h \
+ /home/aoalas/bank_system/backend/src/../include/DatabaseManager.h \
  /usr/include/mysql_driver.h /usr/include/boost/scoped_ptr.hpp \
  /usr/include/boost/smart_ptr/scoped_ptr.hpp \
  /usr/include/boost/smart_ptr/detail/requires_cxx11.hpp \

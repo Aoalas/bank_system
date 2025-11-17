@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/eo/bank_system/backend
+CMAKE_SOURCE_DIR = /home/aoalas/bank_system/backend
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/eo/bank_system/backend/build
+CMAKE_BINARY_DIR = /home/aoalas/bank_system/backend/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -81,14 +81,14 @@ clean: CMakeFiles/bank_server.dir/clean
 CMakeFiles/bank_server.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/bank_server.dir/build.make CMakeFiles/bank_server.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/bank_server.dir/build.make CMakeFiles/bank_server.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/eo/bank_system/backend/build/CMakeFiles --progress-num=1,2,3 "Built target bank_server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/aoalas/bank_system/backend/build/CMakeFiles --progress-num=1,2,3 "Built target bank_server"
 .PHONY : CMakeFiles/bank_server.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/bank_server.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/eo/bank_system/backend/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/aoalas/bank_system/backend/build/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/bank_server.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/eo/bank_system/backend/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/aoalas/bank_system/backend/build/CMakeFiles 0
 .PHONY : CMakeFiles/bank_server.dir/rule
 
 # Convenience name for target.

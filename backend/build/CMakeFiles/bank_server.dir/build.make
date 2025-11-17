@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/eo/bank_system/backend
+CMAKE_SOURCE_DIR = /home/aoalas/bank_system/backend
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/eo/bank_system/backend/build
+CMAKE_BINARY_DIR = /home/aoalas/bank_system/backend/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/bank_server.dir/depend.make
@@ -70,32 +70,32 @@ include CMakeFiles/bank_server.dir/progress.make
 include CMakeFiles/bank_server.dir/flags.make
 
 CMakeFiles/bank_server.dir/src/main.cpp.o: CMakeFiles/bank_server.dir/flags.make
-CMakeFiles/bank_server.dir/src/main.cpp.o: /home/eo/bank_system/backend/src/main.cpp
+CMakeFiles/bank_server.dir/src/main.cpp.o: /home/aoalas/bank_system/backend/src/main.cpp
 CMakeFiles/bank_server.dir/src/main.cpp.o: CMakeFiles/bank_server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/eo/bank_system/backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/bank_server.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/bank_server.dir/src/main.cpp.o -MF CMakeFiles/bank_server.dir/src/main.cpp.o.d -o CMakeFiles/bank_server.dir/src/main.cpp.o -c /home/eo/bank_system/backend/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aoalas/bank_system/backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/bank_server.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/bank_server.dir/src/main.cpp.o -MF CMakeFiles/bank_server.dir/src/main.cpp.o.d -o CMakeFiles/bank_server.dir/src/main.cpp.o -c /home/aoalas/bank_system/backend/src/main.cpp
 
 CMakeFiles/bank_server.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/bank_server.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/eo/bank_system/backend/src/main.cpp > CMakeFiles/bank_server.dir/src/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aoalas/bank_system/backend/src/main.cpp > CMakeFiles/bank_server.dir/src/main.cpp.i
 
 CMakeFiles/bank_server.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/bank_server.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eo/bank_system/backend/src/main.cpp -o CMakeFiles/bank_server.dir/src/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aoalas/bank_system/backend/src/main.cpp -o CMakeFiles/bank_server.dir/src/main.cpp.s
 
 CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o: CMakeFiles/bank_server.dir/flags.make
-CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o: /home/eo/bank_system/backend/src/DatabaseManager.cpp
+CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o: /home/aoalas/bank_system/backend/src/DatabaseManager.cpp
 CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o: CMakeFiles/bank_server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/eo/bank_system/backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o -MF CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o.d -o CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o -c /home/eo/bank_system/backend/src/DatabaseManager.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aoalas/bank_system/backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o -MF CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o.d -o CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.o -c /home/aoalas/bank_system/backend/src/DatabaseManager.cpp
 
 CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/eo/bank_system/backend/src/DatabaseManager.cpp > CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aoalas/bank_system/backend/src/DatabaseManager.cpp > CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.i
 
 CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eo/bank_system/backend/src/DatabaseManager.cpp -o CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aoalas/bank_system/backend/src/DatabaseManager.cpp -o CMakeFiles/bank_server.dir/src/DatabaseManager.cpp.s
 
 # Object files for target bank_server
 bank_server_OBJECTS = \
@@ -111,7 +111,7 @@ bank_server: CMakeFiles/bank_server.dir/build.make
 bank_server: /usr/lib/x86_64-linux-gnu/libmysqlcppconn.so
 bank_server: /usr/lib/x86_64-linux-gnu/libboost_system.so.1.83.0
 bank_server: CMakeFiles/bank_server.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/eo/bank_system/backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable bank_server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/aoalas/bank_system/backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable bank_server"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/bank_server.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -123,6 +123,6 @@ CMakeFiles/bank_server.dir/clean:
 .PHONY : CMakeFiles/bank_server.dir/clean
 
 CMakeFiles/bank_server.dir/depend:
-	cd /home/eo/bank_system/backend/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/eo/bank_system/backend /home/eo/bank_system/backend /home/eo/bank_system/backend/build /home/eo/bank_system/backend/build /home/eo/bank_system/backend/build/CMakeFiles/bank_server.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/aoalas/bank_system/backend/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aoalas/bank_system/backend /home/aoalas/bank_system/backend /home/aoalas/bank_system/backend/build /home/aoalas/bank_system/backend/build /home/aoalas/bank_system/backend/build/CMakeFiles/bank_server.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/bank_server.dir/depend
 

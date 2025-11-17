@@ -79,7 +79,10 @@ public:
     
     // 获取交易记录
     std::string getTransactionHistory(const std::string& cardNumber);
-    
+
+    // 检查卡号是否已存在
+    bool isCardNumberExists(const std::string& cardNumber);
+
     // 开户功能
     bool createAccount(const std::string& name, const std::string& idCard,
                       const std::string& phone, const std::string& address,

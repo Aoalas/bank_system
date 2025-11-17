@@ -18,7 +18,7 @@ std::string getProjectRoot() {
         }
         return path;
     }
-    return "/home/eo/bank_system";
+    return "/home/aoalas/bank_system";
 }
 
 // 手动读取文件内容
@@ -238,6 +238,74 @@ int main() {
         crow::response response(200, history);
         response.add_header("Content-Type", "application/json");
         return response;
+    });
+
+    // 检查卡号是否可用API
+    CROW_ROUTE(app, "/api/check-card/<string>")
+    ([](const std::string& card_number) {
+        std::cout << "检查卡号可用性: " << card_number << std::endl;
+
+        bool exists = DatabaseManager::getInstance().isCardNumberExists(card_number);
+
+        crow::json::wvalue response;
+        response["status"] = "success";
+        response["available"] = !exists;
+        response["message"] = exists ? "卡号已存在" : "卡号可用";
+
+        return crow::response(200, response);
+    });
+
+    // 用户注册/开户API
+    CROW_ROUTE(app, "/api/register").methods("POST"_method)
+    ([](const crow::request& req) {
+        try {
+            auto json = crow::json::load(req.body);
+            if (!json) {
+                return crow::response(400, "{\"status\":\"error\",\"message\":\"无效的JSON数据\"}");
+            }
+
+            std::string name = json["name"].s();
+            std::string id_card = json["id_card"].s();
+            std::string phone = json["phone"].s();
+            std::string address = json["address"].s();
+            std::string card_number = json["card_number"].s();
+            std::string password = json["password"].s();
+            double initial_deposit = json["initial_deposit"].d();
+
+            std::cout << "收到注册请求: 姓名=" << name << " 卡号=" << card_number << std::endl;
+
+            // 验证数据
+            if (name.empty() || id_card.empty() || phone.empty() || card_number.empty() || password.empty()) {
+                return crow::response(400, "{\"status\":\"error\",\"message\":\"请填写所有必填字段\"}");
+            }
+
+            if (initial_deposit < 0) {
+                return crow::response(400, "{\"status\":\"error\",\"message\":\"初始金额不能为负数\"}");
+            }
+
+            // 执行注册
+            bool success = DatabaseManager::getInstance().createAccount(
+                name, id_card, phone, address, card_number, password, initial_deposit
+            );
+
+            crow::json::wvalue response;
+            if (success) {
+                response["status"] = "success";
+                response["message"] = "开户成功！";
+                response["card_number"] = card_number;
+            } else {
+                response["status"] = "error";
+                response["message"] = "开户失败，请检查信息是否正确";
+            }
+
+            return crow::response(200, response);
+
+        } catch (const std::exception& e) {
+            crow::json::wvalue error_response;
+            error_response["status"] = "error";
+            error_response["message"] = "服务器内部错误";
+            return crow::response(500, error_response);
+        }
     });
 
     // 健康检查端点

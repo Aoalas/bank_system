@@ -435,3 +435,19 @@
 .transaction-type-withdraw {
     color: #dc3545;
 }
+
+.register-link {
+    text-align: center;
+    margin-top: 1rem;
+    color: #666;
+}
+
+.register-link a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
