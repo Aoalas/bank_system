@@ -3,192 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>银行储蓄卡管理系统 - 登录</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            width: 400px;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-        }
-        
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        button:hover {
-            background: #764ba2;
-        }
-        
-        .message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            display: none;
-        }
-        
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .test-accounts {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            font-size: 12px;
-        }
-        
-        .test-accounts h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-    </style>
+    <title>登录 | 银行储蓄系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="login-container">
-        <h1>银行储蓄卡管理系统</h1>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="cardNumber">储蓄卡号:</label>
-                <input type="text" id="cardNumber" placeholder="请输入卡号" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">密码:</label>
-                <input type="password" id="password" placeholder="请输入密码" required>
-            </div>
-            
-            <button type="submit">登录</button>
-        </form>
-        
-        <div id="message" class="message"></div>
+<canvas id="universe"></canvas>
 
-        <div class="register-link">
-            没有账户？ <a href="/register.html">立即开户</a>
+<div class="page-center">
+    <div class="geek-card" style="width: 100%; max-width: 420px; padding: 40px;">
+        <div class="page-title">
+            <i class="fas fa-cube"></i>
+            <h2>银行储蓄系统</h2>
+            <p style="font-size: 14px; color: var(--second-text); margin-top: 5px;">安全 · 极速 · 智能</p>
         </div>
-        
-        <div class="test-accounts">
-            <h3>测试账号:</h3>
-            <div>卡号: 6222020111111111001 密码: 123456 (张三)</div>
-            <div>卡号: 6222020222222222002 密码: 123456 (李四)</div>
-            <div>卡号: 6222020333333333003 密码: 123456 (王五)</div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="text" id="cardNumber" placeholder=" " required autocomplete="off">
+                <label>储蓄卡号</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password" placeholder=" " required>
+                <label>访问密码</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                登录系统 <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <span style="color: var(--second-text);">还没有账户？</span>
+            <a href="/register.html" style="color: var(--theme-color); font-weight: bold; text-decoration: none;">立即开户</a>
+        </div>
+
+        <div style="margin-top: 30px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
+            <div style="font-size: 12px; color: var(--second-text); margin-bottom: 8px;">
+                <i class="fas fa-terminal"></i> DEBUG_ACCOUNTS:
+            </div>
+            <div style="font-family: monospace; font-size: 12px; color: #818cf8;">
+                > User1: 6222020111111111001 / 123456<br>
+                > User2: 6222020222222222002 / 123456<br>
+                > User3: 6222020333333333003 / 123456
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const cardNumber = document.getElementById('cardNumber').value;
-            const password = document.getElementById('password').value;
-            const messageDiv = document.getElementById('message');
-            
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        card_number: cardNumber,
-                        password: password
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    messageDiv.textContent = `登录成功！正在跳转...`;
-                    messageDiv.className = 'message success';
-                    messageDiv.style.display = 'block';
-    
-                    // 保存卡号到sessionStorage
-                    sessionStorage.setItem('cardNumber', cardNumber);
-    
-                    // 跳转到用户面板
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 1000);
-                } else {
-                    messageDiv.textContent = result.message || '登录失败';
-                    messageDiv.className = 'message error';
-                    messageDiv.style.display = 'block';
-                }
-            } catch (error) {
-                messageDiv.textContent = '网络错误，请检查服务器连接';
-                messageDiv.className = 'message error';
-                messageDiv.style.display = 'block';
-                console.error('登录错误:', error);
-            }
+<div id="message" class="snackbar"></div>
+
+<script>
+    // 动态星空壁纸逻辑
+    const canvas = document.getElementById('universe');
+    const ctx = canvas.getContext('2d');
+    let width, height, stars = [];
+
+    function init() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        stars = [];
+        for (let i = 0; i < 100; i++) {
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                size: Math.random() * 2,
+                speed: Math.random() * 0.5
+            });
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        stars.forEach(star => {
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+            ctx.fill();
+            star.y -= star.speed;
+            if (star.y < 0) star.y = height;
         });
-        
-    </script>
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    animate();
+
+    // 登录逻辑
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = this.querySelector('button');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> 验证中...';
+        btn.style.opacity = '0.7';
+
+        const cardNumber = document.getElementById('cardNumber').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ card_number: cardNumber, password: password })
+            });
+            const result = await res.json();
+
+            if (result.status === 'success') {
+                showToast('验证通过，正在进入...', 'success');
+                sessionStorage.setItem('cardNumber', cardNumber);
+                setTimeout(() => window.location.href = '/dashboard.html', 800);
+            } else {
+                showToast(result.message || '登录失败', 'error');
+                btn.innerHTML = originalHTML;
+                btn.style.opacity = '1';
+            }
+        } catch (error) {
+            showToast('服务器连接失败', 'error');
+            btn.innerHTML = originalHTML;
+            btn.style.opacity = '1';
+        }
+    });
+
+    function showToast(msg, type) {
+        const el = document.getElementById('message');
+        el.textContent = msg;
+        el.className = `snackbar ${type}`;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3000);
+    }
+</script>
 </body>
 </html>

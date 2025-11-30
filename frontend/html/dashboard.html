@@ -3,167 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户面板 - 银行储蓄卡管理系统</title>
+    <title>账户中心 | 银行储蓄系统</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- 顶部导航 -->
-        <header class="dashboard-header">
-            <div class="header-content">
-                <h1 class="logo">银行储蓄卡管理系统</h1>
-                <div class="user-info">
-                    <span class="welcome-text">欢迎，<span id="userName">加载中...</span></span>
-                    <span class="card-number" id="cardNumberDisplay"></span>
-                    <button class="logout-btn" onclick="logout()">退出登录</button>
-                </div>
-            </div>
-        </header>
+<canvas id="universe"></canvas>
 
-        <!-- 主要内容区域 -->
-        <main class="dashboard-main">
-            <!-- 余额显示区域 -->
-            <section class="balance-section">
-                <div class="balance-card">
-                    <h2 class="balance-title">账户余额</h2>
-                    <div class="balance-amount" id="balanceDisplay">¥ 0.00</div>
-                    <div class="balance-info">
-                        <span>卡号: <span id="displayCardNumber">-</span></span>
-                        <span>状态: <span class="status-active">正常</span></span>
-                    </div>
-                </div>
-            </section>
+<div class="container-width">
+    <nav class="dash-header">
+        <div style="font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-university" style="color: var(--theme-color);"></i>
+            <span>银行储蓄系统</span>
+        </div>
+        <div style="font-size: 14px; color: var(--second-text); display: flex; align-items: center; gap: 15px;">
+            <span>用户：<b id="userName" style="color: var(--font-color);">...</b></span>
+            <span style="opacity: 0.3">|</span>
+            <span id="cardNumberDisplay" style="font-family: monospace;">...</span>
+            <button onclick="logout()" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px;">
+                退出
+            </button>
+        </div>
+    </nav>
 
-            <!-- 功能操作区域 -->
-            <section class="actions-section">
-                <h2 class="section-title">账户操作</h2>
-                <div class="actions-grid">
-                    <!-- 存款功能 -->
-                    <div class="action-card" onclick="showDepositModal()">
-                        <div class="action-icon">💰</div>
-                        <h3>存款</h3>
-                        <p>向您的账户存入资金</p>
-                        <div class="action-hint">点击存款</div>
-                    </div>
-
-                    <!-- 取款功能 -->
-                    <div class="action-card" onclick="showWithdrawModal()">
-                        <div class="action-icon">💳</div>
-                        <h3>取款</h3>
-                        <p>从账户中取出资金</p>
-                        <div class="action-hint">点击取款</div>
-                    </div>
-
-                    <!-- 交易记录 -->
-                    <div class="action-card" onclick="showTransactionHistory()">
-                        <div class="action-icon">📊</div>
-                        <h3>交易记录</h3>
-                        <p>查看账户交易历史</p>
-                        <div class="action-hint">点击查看</div>
-                    </div>
-
-                    <!-- 账户信息 -->
-                    <div class="action-card" onclick="showAccountInfo()">
-                        <div class="action-icon">👤</div>
-                        <h3>账户信息</h3>
-                        <p>查看个人账户详情</p>
-                        <div class="action-hint">点击查看</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 最近交易区域 -->
-            <section class="recent-transactions">
-                <h2 class="section-title">最近交易</h2>
-                <div class="transactions-list" id="recentTransactions">
-                    <div class="loading-text">加载交易记录中...</div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- 存款模态框 -->
-    <div id="depositModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>存款操作</h3>
-                <span class="close" onclick="closeDepositModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="depositAmount">存款金额 (元):</label>
-                    <input type="number" id="depositAmount" placeholder="请输入存款金额" min="0.01" step="0.01">
-                </div>
-                <div class="current-balance">
-                    当前余额: <span id="currentBalanceDeposit">¥ 0.00</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeDepositModal()">取消</button>
-                <button class="btn-primary" onclick="processDeposit()">确认存款</button>
-            </div>
+    <div class="geek-card balance-card">
+        <p style="color: var(--second-text); font-size: 14px; margin-bottom: 10px;">账户总资产折合 (CNY)</p>
+        <div id="balanceDisplay" class="balance-num">¥ --.--</div>
+        <div style="margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 6px 16px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(16, 185, 129, 0.2);">
+            <i class="fas fa-check-circle"></i>
+            账户状态正常 | 卡号: <span id="displayCardNumber">--</span>
         </div>
     </div>
 
-    <!-- 取款模态框 -->
-    <div id="withdrawModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>取款操作</h3>
-                <span class="close" onclick="closeWithdrawModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="withdrawAmount">取款金额 (元):</label>
-                    <input type="number" id="withdrawAmount" placeholder="请输入取款金额" min="0.01" step="0.01">
-                </div>
-                <div class="current-balance">
-                    当前余额: <span id="currentBalanceWithdraw">¥ 0.00</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeWithdrawModal()">取消</button>
-                <button class="btn-primary" onclick="processWithdraw()">确认取款</button>
-            </div>
+    <div class="grid-menu">
+        <div class="geek-card menu-item" onclick="showDepositModal()">
+            <div class="menu-icon"><i class="fas fa-piggy-bank"></i></div>
+            <h3>存款充值</h3>
+            <p style="font-size: 12px; color: var(--second-text); margin-top: 5px;">实时存入资金</p>
+        </div>
+
+        <div class="geek-card menu-item" onclick="showWithdrawModal()">
+            <div class="menu-icon"><i class="fas fa-wallet"></i></div>
+            <h3>余额取现</h3>
+            <p style="font-size: 12px; color: var(--second-text); margin-top: 5px;">快速提取现金</p>
+        </div>
+
+        <div class="geek-card menu-item" onclick="showTransactionHistory()">
+            <div class="menu-icon"><i class="fas fa-file-invoice"></i></div>
+            <h3>交易明细</h3>
+            <p style="font-size: 12px; color: var(--second-text); margin-top: 5px;">查看资金流水</p>
+        </div>
+
+        <div class="geek-card menu-item" onclick="showAccountInfo()">
+            <div class="menu-icon"><i class="fas fa-id-card"></i></div>
+            <h3>账户信息</h3>
+            <p style="font-size: 12px; color: var(--second-text); margin-top: 5px;">查看个人档案</p>
         </div>
     </div>
 
-    <!-- 交易记录模态框 -->
-    <div id="historyModal" class="modal large-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>交易记录</h3>
-                <span class="close" onclick="closeHistoryModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="transactions-table-container">
-                    <table class="transactions-table">
-                        <thead>
-                            <tr>
-                                <th>时间</th>
-                                <th>类型</th>
-                                <th>金额</th>
-                                <th>余额</th>
-                                <th>描述</th>
-                            </tr>
-                        </thead>
-                        <tbody id="transactionsTableBody">
-                            <tr>
-                                <td colspan="5" class="loading-text">加载中...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeHistoryModal()">关闭</button>
+    <div class="geek-card trans-list">
+        <div style="padding: 20px; border-bottom: 1px solid var(--border-color);">
+            <h3 style="font-size: 16px;">最近交易动态</h3>
+        </div>
+        <div id="recentTransactions">
+            <div style="text-align: center; color: var(--second-text); padding: 30px;">正在加载数据...</div>
+        </div>
+    </div>
+</div>
+
+<div id="depositModal" class="modal-wrap">
+    <div class="modal-inner">
+        <h3 style="margin-bottom: 20px; text-align: center;">存款操作</h3>
+        <div class="input-group">
+            <input type="number" id="depositAmount" placeholder=" " style="font-size: 20px; font-weight: bold; color: var(--success);">
+            <label>请输入存款金额 (元)</label>
+        </div>
+        <p style="font-size: 12px; color: var(--second-text); margin-bottom: 20px; text-align: center;">
+            当前余额: <span id="currentBalanceDeposit">--</span>
+        </p>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-outline" onclick="closeDepositModal()">取消</button>
+            <button class="btn btn-primary" onclick="processDeposit()">确认存款</button>
+        </div>
+    </div>
+</div>
+
+<div id="withdrawModal" class="modal-wrap">
+    <div class="modal-inner">
+        <h3 style="margin-bottom: 20px; text-align: center; color: var(--danger);">取款操作</h3>
+        <div class="input-group">
+            <input type="number" id="withdrawAmount" placeholder=" " style="font-size: 20px; font-weight: bold; color: var(--danger);">
+            <label>请输入取款金额 (元)</label>
+        </div>
+        <p style="font-size: 12px; color: var(--second-text); margin-bottom: 20px; text-align: center;">
+            当前余额: <span id="currentBalanceWithdraw">--</span>
+        </p>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-outline" onclick="closeWithdrawModal()">取消</button>
+            <button class="btn btn-primary" style="background: var(--danger);" onclick="processWithdraw()">确认取款</button>
+        </div>
+    </div>
+</div>
+
+<div id="historyModal" class="modal-wrap">
+    <div class="modal-inner" style="max-width: 600px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>资金流水记录</h3>
+            <span onclick="closeHistoryModal()" style="cursor: pointer; font-size: 20px;">&times;</span>
+        </div>
+        <div style="max-height: 50vh; overflow-y: auto;">
+            <div id="transactionsTableBody">
             </div>
         </div>
     </div>
+</div>
 
-    <!-- 消息提示 -->
-    <div id="message" class="message"></div>
+<div id="message" class="snackbar"></div>
+<script src="/js/dashboard.js"></script>
+<script>
+    // 复用星空壁纸
+    const canvas = document.getElementById('universe');
+    const ctx = canvas.getContext('2d');
+    let width, height, stars = [];
+    function init() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; stars=[]; for(let i=0;i<80;i++){stars.push({x:Math.random()*width,y:Math.random()*height,size:Math.random()*2,speed:Math.random()*0.5});} }
+    function animate() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill();s.y-=s.speed;if(s.y<0)s.y=height;}); requestAnimationFrame(animate); }
+    window.addEventListener('resize', init); init(); animate();
 
-    <script src="/js/dashboard.js"></script>
+    // UI 适配
+    window.showDepositModal = () => { document.getElementById('depositModal').style.display = 'flex'; document.getElementById('depositAmount').value = ''; }
+    window.closeDepositModal = () => document.getElementById('depositModal').style.display = 'none';
+
+    window.showWithdrawModal = () => { document.getElementById('withdrawModal').style.display = 'flex'; document.getElementById('withdrawAmount').value = ''; }
+    window.closeWithdrawModal = () => document.getElementById('withdrawModal').style.display = 'none';
+
+    window.showTransactionHistory = async () => {
+        document.getElementById('historyModal').style.display = 'flex';
+        const container = document.getElementById('transactionsTableBody');
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">加载中...</div>';
+        try {
+            const res = await fetch(`/api/transactions/${sessionStorage.getItem('cardNumber')}`);
+            const data = await res.json();
+            if(data.status === 'success') {
+                container.innerHTML = '';
+                if(data.transactions.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">暂无记录</div>';
+                    return;
+                }
+                data.transactions.forEach(t => {
+                    const isIn = t.type === 'deposit';
+                    const html = `
+                            <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px dashed rgba(255,255,255,0.1);">
+                                <div>
+                                    <div style="font-weight:bold; color: var(--font-color);">${t.type === 'deposit' ? '存款' : '取款'}</div>
+                                    <div style="font-size:12px; color:var(--second-text);">${new Date(t.create_time).toLocaleString()}</div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div style="font-weight:bold; font-size: 16px; color:${isIn ? 'var(--success)' : 'var(--danger)'}">
+                                        ${isIn?'+':'-'} ${Math.abs(t.amount).toFixed(2)}
+                                    </div>
+                                    <div style="font-size:12px; color:var(--second-text);">余额: ${parseFloat(t.balance_after).toFixed(2)}</div>
+                                </div>
+                            </div>
+                        `;
+                    container.innerHTML += html;
+                });
+            }
+        } catch(e) { container.innerHTML = '<div style="text-align:center;">加载失败</div>'; }
+    }
+    window.closeHistoryModal = () => document.getElementById('historyModal').style.display = 'none';
+
+    window.showMessage = (msg, type) => {
+        const el = document.getElementById('message');
+        el.textContent = msg;
+        el.className = `snackbar ${type}`;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3000);
+    }
+</script>
 </body>
 </html>

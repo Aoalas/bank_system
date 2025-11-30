@@ -3,252 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户注册 - 银行储蓄卡管理系统</title>
+    <title>开户 | 银行储蓄系统</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .register-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .register-form {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .form-title {
-            text-align: center;
-            color: #333;
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-group {
-            flex: 1;
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #555;
-            font-weight: bold;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .card-check {
-            display: flex;
-            gap: 0.5rem;
-            align-items: flex-end;
-        }
-
-        .card-check input {
-            flex: 1;
-        }
-
-        .check-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 0.75rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .check-btn:hover {
-            background: #218838;
-        }
-
-        .check-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-
-        .availability {
-            margin-top: 0.25rem;
-            font-size: 0.8rem;
-        }
-
-        .available {
-            color: #28a745;
-        }
-
-        .unavailable {
-            color: #dc3545;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .btn-primary {
-            flex: 1;
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-primary:hover {
-            background: #764ba2;
-        }
-
-        .btn-secondary {
-            flex: 1;
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background: #545b62;
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 1rem;
-            color: #666;
-        }
-
-        .login-link a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-
-        .message {
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            text-align: center;
-            display: none;
-        }
-
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<div class="register-container">
-    <div class="register-form">
-        <h1 class="form-title">银行储蓄卡开户</h1>
+<canvas id="universe"></canvas>
 
-        <div id="message" class="message"></div>
+<div class="page-center">
+    <div class="geek-card" style="width: 100%; max-width: 600px; padding: 40px;">
+        <div class="page-title">
+            <h2>新用户开户</h2>
+        </div>
 
         <form id="registerForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="name">姓名 *</label>
-                    <input type="text" id="name" name="name" required>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="input-group">
+                    <input type="text" id="name" placeholder=" " required>
+                    <label>真实姓名</label>
                 </div>
-                <div class="form-group">
-                    <label for="id_card">身份证号 *</label>
-                    <input type="text" id="id_card" name="id_card" required maxlength="18">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">手机号码 *</label>
-                <input type="tel" id="phone" name="phone" required maxlength="11">
-            </div>
-
-            <div class="form-group">
-                <label for="address">联系地址</label>
-                <input type="text" id="address" name="address" placeholder="选填">
-            </div>
-
-            <div class="form-group">
-                <label for="card_number">储蓄卡号 *</label>
-                <div class="card-check">
-                    <input type="text" id="card_number" name="card_number" required maxlength="19" placeholder="请输入卡号">
-                    <button type="button" class="check-btn" id="checkCardBtn">检查可用性</button>
-                    <small>卡号由16-19位数的数字组成</small>
-                </div>
-                <div id="cardAvailability" class="availability"></div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="password">密码 *</label>
-                    <input type="password" id="password" name="password" required minlength="6">
-                </div>
-                <div class="form-group">
-                    <label for="confirm_password">确认密码 *</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required>
+                <div class="input-group">
+                    <input type="text" id="id_card" placeholder=" " maxlength="18" required>
+                    <label>身份证号</label>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="initial_deposit">初始存款金额 *</label>
-                <input type="number" id="initial_deposit" name="initial_deposit" value="100" min="0" step="0.01" required>
-                <small>最少存款金额: ¥0.01</small>
+            <div class="input-group">
+                <input type="tel" id="phone" placeholder=" " maxlength="11" required>
+                <label>手机号码</label>
+                <div class="input-hint">仅限中国大陆 11 位手机号码</div>
             </div>
 
-            <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="goToLogin()">返回登录</button>
-                <button type="submit" class="btn-primary" id="submitBtn">立即开户</button>
+            <div class="input-group">
+                <input type="text" id="address" placeholder=" ">
+                <label>联系地址 (选填)</label>
+            </div>
+
+            <div class="input-group" style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="flex: 1; position: relative;">
+                    <input type="text" id="card_number" placeholder=" " maxlength="19" required>
+                    <label>自定义卡号</label>
+                    <div id="cardAvailability" style="font-size: 12px; margin-top: 5px;"></div>
+                </div>
+                <button type="button" id="checkCardBtn" class="btn btn-outline" style="width: auto; padding: 0 20px; height: 45px;">
+                    检查
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="input-group">
+                    <input type="password" id="password" placeholder=" " minlength="6" required>
+                    <label>设置密码</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="confirm_password" placeholder=" " required>
+                    <label>确认密码</label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <input type="number" id="initial_deposit" value="100" min="0" step="0.01" placeholder=" " required style="color: var(--success); font-weight: bold;">
+                <label>初始存款 (元)</label>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button type="button" class="btn btn-outline" onclick="goToLogin()">返回</button>
+                <button type="submit" class="btn btn-primary" style="flex: 2;" id="submitBtn">提交开户</button>
             </div>
         </form>
-
-        <div class="login-link">
-            已有账户？ <a href="/">立即登录</a>
-        </div>
     </div>
 </div>
 
+<div id="message" class="snackbar"></div>
 <script src="/js/register.js"></script>
+<script>
+    // 复用星空壁纸逻辑
+    const canvas = document.getElementById('universe');
+    const ctx = canvas.getContext('2d');
+    let width, height, stars = [];
+    function init() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; stars=[]; for(let i=0;i<80;i++){stars.push({x:Math.random()*width,y:Math.random()*height,size:Math.random()*2,speed:Math.random()*0.5});} }
+    function animate() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill();s.y-=s.speed;if(s.y<0)s.y=height;}); requestAnimationFrame(animate); }
+    window.addEventListener('resize', init); init(); animate();
+
+    window.showMessage = function(msg, type) {
+        const el = document.getElementById('message');
+        el.textContent = msg; el.className = `snackbar ${type}`; el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3000);
+    }
+</script>
 </body>
 </html>

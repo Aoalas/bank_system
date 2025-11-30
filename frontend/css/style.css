@@ -1,453 +1,335 @@
-/* 用户面板样式 */
-.dashboard-container {
+/* === Anzhiyu Dark (安知鱼·暗黑极客版) === */
+:root {
+    /* 核心暗色板 */
+    --global-bg: #18171d;       /* 深邃黑背景 */
+    --card-bg: rgba(29, 30, 34, 0.85); /* 半透明卡片 */
+    --font-color: #f7f7fa;      /* 亮白文字 */
+    --second-text: #a1a2b8;     /* 次要文字 */
+
+    /* 极客蓝主题色 */
+    --theme-color: #3b82f6;
+    --theme-hover: #60a5fa;
+    --success: #10b981;
+    --danger: #ef4444;
+
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-hover: rgba(59, 130, 246, 0.5);
+
+    --radius: 12px;
+    --shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.5);
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+body {
+    background-color: var(--global-bg);
+    color: var(--font-color);
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow-x: hidden;
+    position: relative;
+    /* 动态背景底层：极光渐变 */
+    background-image: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 60%),
+    radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.1), transparent 50%);
 }
 
-.dashboard-header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 1rem 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-}
-
-.logo {
-    color: #333;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.welcome-text {
-    color: #666;
-}
-
-.card-number {
-    background: #f8f9fa;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.9rem;
-}
-
-.logout-btn {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.logout-btn:hover {
-    background: #c82333;
-}
-
-.dashboard-main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-/* 余额卡片 */
-.balance-section {
-    margin-bottom: 2rem;
-}
-
-.balance-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.balance-title {
-    color: #666;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-}
-
-.balance-amount {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #28a745;
-    margin-bottom: 1rem;
-}
-
-.balance-info {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.status-active {
-    color: #28a745;
-    font-weight: bold;
-}
-
-/* 功能操作网格 */
-.actions-section {
-    margin-bottom: 2rem;
-}
-
-.section-title {
-    color: white;
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-}
-
-.actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-}
-
-.action-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.action-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.action-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-}
-
-.action-card h3 {
-    color: #333;
-    margin-bottom: 0.5rem;
-}
-
-.action-card p {
-    color: #666;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-.action-hint {
-    color: #667eea;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
-
-/* 最近交易 */
-.recent-transactions {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.transactions-list {
-    min-height: 100px;
-}
-
-.loading-text {
-    text-align: center;
-    color: #666;
-    padding: 2rem;
-}
-
-/* 模态框样式 */
-.modal {
-    display: none;
+/* 动态壁纸 Canvas 容器 */
+#universe {
     position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
+    top: 0; left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1; /* 置于最底层 */
+    pointer-events: none;
 }
 
-.modal-content {
-    background-color: white;
-    margin: 5% auto;
-    padding: 0;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+/* === 核心组件：暗黑磨砂卡片 === */
+.geek-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: all 0.3s var(--ease);
+    position: relative;
+    overflow: hidden;
 }
 
-.large-modal .modal-content {
-    max-width: 800px;
+.geek-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 12px 24px -6px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
 }
 
-.modal-header {
+/* 卡片顶部流光线条 */
+.geek-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--theme-color), transparent);
+    opacity: 0.5;
+}
+
+/* === 布局工具 === */
+.page-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    z-index: 1;
+    position: relative;
+}
+
+.container-width {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    z-index: 1;
+    position: relative;
+}
+
+/* === 标题样式 === */
+h1, h2, h3 {
+    color: var(--font-color);
+    font-weight: 700;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.page-title i {
+    font-size: 40px;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #fff, var(--theme-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* === 输入框 (极客风优化) === */
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--font-color);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: var(--theme-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* 浮动标签 */
+.input-group label {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+    color: var(--second-text);
+    font-size: 14px;
+    pointer-events: none;
+    transition: all 0.2s var(--ease);
+    background: transparent;
+    padding: 0 4px;
+}
+
+/* 标签上浮高亮 */
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label {
+    top: -10px;
+    left: 8px;
+    font-size: 12px;
+    color: var(--theme-color);
+    background: var(--global-bg); /* 用背景色遮挡边框 */
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.input-hint {
+    font-size: 12px;
+    color: var(--second-text);
+    margin-top: 6px;
+    padding-left: 4px;
+}
+
+/* === 按钮系统 === */
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--theme-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+.btn-primary:hover {
+    background: var(--theme-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--second-text);
+}
+.btn-outline:hover {
+    border-color: var(--font-color);
+    color: var(--font-color);
+    background: rgba(255,255,255,0.05);
+}
+
+/* === Dashboard 布局 === */
+.dash-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
-    border-bottom: 1px solid #eee;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #333;
-}
-
-.close {
-    color: #aaa;
-    font-size: 1.5rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #333;
-}
-
-.modal-body {
-    padding: 1.5rem;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding: 1.5rem;
-    border-top: 1px solid #eee;
-}
-
-/* 表单样式 */
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #333;
-    font-weight: bold;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.current-balance {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
-    color: #333;
-}
-
-/* 按钮样式 */
-.btn-primary {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.3s;
-}
-
-.btn-primary:hover {
-    background: #764ba2;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.3s;
-}
-
-.btn-secondary:hover {
-    background: #545b62;
-}
-
-/* 交易表格 */
-.transactions-table-container {
-    overflow-x: auto;
-}
-
-.transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.transactions-table th,
-.transactions-table td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-}
-
-.transactions-table th {
-    background: #f8f9fa;
-    font-weight: bold;
-    color: #333;
-}
-
-.transaction-type-deposit {
-    color: #28a745;
-    font-weight: bold;
-}
-
-.transaction-type-withdraw {
-    color: #dc3545;
-    font-weight: bold;
-}
-
-/* 消息提示 */
-.message {
-    position: fixed;
+    background: rgba(29, 30, 34, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 30px;
+    position: sticky;
     top: 20px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    border-radius: 5px;
+    z-index: 100;
+}
+
+/* 余额卡片 (酷炫渐变) */
+.balance-card {
+    text-align: center;
+    padding: 60px 20px;
+    margin-bottom: 30px;
+    /* 安知鱼风格的深色渐变 */
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05));
+}
+
+.balance-num {
+    font-size: 56px;
+    font-weight: 700;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 10px 0;
+    font-family: 'Microsoft YaHei', sans-serif;
+    letter-spacing: -1px;
+}
+
+/* 功能网格 */
+.grid-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.menu-item {
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--card-bg);
+}
+.menu-item:hover {
+    border-color: var(--theme-color);
+}
+
+.menu-icon {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: var(--theme-color);
+    transition: 0.3s;
+    display: inline-block;
+}
+.menu-item:hover .menu-icon {
+    transform: scale(1.2) rotate(10deg);
+    text-shadow: 0 0 20px var(--theme-color);
+}
+
+/* 交易列表 */
+.trans-list {
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+.trans-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: 0.2s;
+}
+.trans-row:hover {
+    background: rgba(255,255,255,0.03);
+}
+.money-in { color: var(--success); font-weight: bold; }
+.money-out { color: var(--font-color); font-weight: bold; }
+
+/* 弹窗 & 提示 */
+.modal-wrap {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.modal-inner {
+    background: #1e1e24;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 450px;
+    padding: 30px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s var(--ease);
+}
+
+.snackbar {
+    position: fixed;
+    top: 30px; left: 50%; transform: translateX(-50%);
+    background: var(--theme-color);
     color: white;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     z-index: 2000;
     display: none;
-    max-width: 300px;
+    animation: slideDown 0.3s;
 }
+.snackbar.error { background: var(--danger); }
 
-.message.success {
-    background: #28a745;
-    display: block;
-}
-
-.message.error {
-    background: #dc3545;
-    display: block;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-    
-    .user-info {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .dashboard-main {
-        padding: 1rem;
-    }
-    
-    .balance-amount {
-        font-size: 2rem;
-    }
-    
-    .actions-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .modal-content {
-        margin: 10% auto;
-        width: 95%;
-    }
-}
-
-/* 交易记录项目样式 */
-.transaction-item {
-    background: #f8f9fa;
-    padding: 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 8px;
-    border-left: 4px solid #667eea;
-}
-
-.transaction-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.transaction-details {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 0.25rem;
-}
-
-.transaction-description {
-    font-size: 0.8rem;
-    color: #888;
-}
-
-.transaction-type {
-    font-weight: bold;
-}
-
-.transaction-amount {
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.transaction-type-deposit {
-    color: #28a745;
-}
-
-.transaction-type-withdraw {
-    color: #dc3545;
-}
-
-.register-link {
-    text-align: center;
-    margin-top: 1rem;
-    color: #666;
-}
-
-.register-link a {
-    color: #667eea;
-    text-decoration: none;
-}
-
-.register-link a:hover {
-    text-decoration: underline;
-}
-
+/* 动画定义 */
+@keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes slideDown { from { transform: translate(-50%, -20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
