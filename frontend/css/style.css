@@ -137,6 +137,27 @@ h1, h2, h3 {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
+.input-group input[readonly] {
+    border-bottom-style: dashed;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    color: var(--font-color);
+    cursor: default;
+    background: transparent;
+}
+.input-group input[readonly]:focus {
+    box-shadow: none;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+.input-group input[readonly] ~ label {
+    top: -10px !important;
+    left: 8px !important;
+    font-size: 12px !important;
+    color: var(--second-text) !important;
+    background: var(--card-bg);
+    padding: 0 4px;
+    border-radius: 4px;
+}
+
 /* 浮动标签 */
 .input-group label {
     position: absolute;
@@ -157,7 +178,7 @@ h1, h2, h3 {
     left: 8px;
     font-size: 12px;
     color: var(--theme-color);
-    background: var(--global-bg); /* 用背景色遮挡边框 */
+    background: var(--global-bg);
     border-radius: 4px;
     font-weight: bold;
 }
@@ -228,7 +249,6 @@ h1, h2, h3 {
     text-align: center;
     padding: 60px 20px;
     margin-bottom: 30px;
-    /* 安知鱼风格的深色渐变 */
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05));
 }
 
@@ -273,13 +293,52 @@ h1, h2, h3 {
     text-shadow: 0 0 20px var(--theme-color);
 }
 
-/* 交易列表 */
+/* === 交易列表 (新增折叠样式) === */
 .trans-list {
     background: var(--card-bg);
     border-radius: 12px;
     border: 1px solid var(--border-color);
     overflow: hidden;
+    /* 移除 padding，让标题栏占满 */
 }
+
+.trans-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.trans-list-header:hover {
+    background: rgba(255,255,255,0.03);
+}
+
+.trans-content {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    border-top: 1px solid transparent;
+}
+
+/* 展开状态样式 */
+.trans-list.expanded .trans-content {
+    max-height: 800px; /* 足够容纳内容的高度 */
+    opacity: 1;
+    border-top-color: var(--border-color);
+}
+
+/* 箭头旋转动画 */
+.toggle-icon {
+    transition: transform 0.3s var(--ease);
+    color: var(--second-text);
+}
+.trans-list.expanded .toggle-icon {
+    transform: rotate(180deg);
+    color: var(--theme-color);
+}
+
 .trans-row {
     display: flex;
     justify-content: space-between;
@@ -290,6 +349,7 @@ h1, h2, h3 {
 .trans-row:hover {
     background: rgba(255,255,255,0.03);
 }
+.trans-row:last-child { border-bottom: none; }
 .money-in { color: var(--success); font-weight: bold; }
 .money-out { color: var(--font-color); font-weight: bold; }
 

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人档案 | 银行储蓄系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<canvas id="universe"></canvas>
+
+<div class="page-center">
+    <div class="geek-card" style="width: 100%; max-width: 900px; padding: 40px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--theme-color), var(--theme-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+                <div>
+                    <h2 style="margin: 0; font-size: 22px;">账户档案</h2>
+                    <p style="margin: 4px 0 0; font-size: 13px; color: var(--second-text);">User Profile & Settings</p>
+                </div>
+            </div>
+            <button class="btn btn-outline" onclick="window.location.href='/dashboard.html'" style="width: auto; padding: 8px 20px; border-radius: 20px;">
+                <i class="fas fa-arrow-left"></i> 返回面板
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;">
+
+            <div>
+                <h3 style="font-size: 16px; color: var(--theme-color); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-id-badge"></i> 身份认证信息
+                </h3>
+
+                <div class="input-group">
+                    <input type="text" id="infoName" readonly>
+                    <label>真实姓名</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="infoIdCard" readonly>
+                    <label>身份证号码</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="infoPhone" readonly>
+                    <label>预留手机号</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="infoAddress" readonly>
+                    <label>联系地址</label>
+                </div>
+            </div>
+
+            <div>
+                <h3 style="font-size: 16px; color: var(--success); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-credit-card"></i> 储蓄账户详情
+                </h3>
+
+                <div class="input-group">
+                    <input type="text" id="infoCardNumber" readonly style="font-family: monospace; letter-spacing: 1px; color: var(--font-color); font-weight: bold;">
+                    <label>储蓄卡号 (ID)</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="infoBalance" readonly style="color: var(--success); font-weight: bold; font-size: 24px;">
+                    <label>当前账户余额</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="infoDate" readonly>
+                    <label>开户注册时间</label>
+                </div>
+
+                <div style="margin-top: 30px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px dashed var(--border-color);">
+                    <div style="font-size: 12px; color: var(--second-text); margin-bottom: 5px;">账户状态</div>
+                    <div style="display: flex; align-items: center; gap: 8px; color: var(--success); font-size: 14px;">
+                        <i class="fas fa-check-circle"></i> 状态正常 · 已激活
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="message" class="snackbar"></div>
+<script src="/js/profile.js"></script>
+<script>
+    // 动态星空 (复用逻辑，保持风格统一)
+    const canvas = document.getElementById('universe');
+    const ctx = canvas.getContext('2d');
+    let width, height, stars = [];
+    function init() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; stars=[]; for(let i=0;i<80;i++){stars.push({x:Math.random()*width,y:Math.random()*height,size:Math.random()*2,speed:Math.random()*0.5});} }
+    function animate() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill();s.y-=s.speed;if(s.y<0)s.y=height;}); requestAnimationFrame(animate); }
+    window.addEventListener('resize', init); init(); animate();
+</script>
+</body>
+</html>

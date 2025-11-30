@@ -20,15 +20,25 @@
             <span>用户：<b id="userName" style="color: var(--font-color);">...</b></span>
             <span style="opacity: 0.3">|</span>
             <span id="cardNumberDisplay" style="font-family: monospace;">...</span>
-            <button onclick="logout()" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px;">
-                退出
+            <button onclick="showLogoutModal()" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s;">
+                <i class="fas fa-power-off"></i> 退出
             </button>
         </div>
     </nav>
 
     <div class="geek-card balance-card">
         <p style="color: var(--second-text); font-size: 14px; margin-bottom: 10px;">账户总资产折合 (CNY)</p>
-        <div id="balanceDisplay" class="balance-num">¥ --.--</div>
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin: 10px 0 25px 0;">
+            <div id="balanceDisplay" class="balance-num" style="margin: 0; line-height: 1;">¥ ****</div>
+            <div onclick="toggleBalance()" title="显示/隐藏金额"
+                 style="cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1);"
+                 onmouseover="this.style.background='rgba(255,255,255,0.15)'"
+                 onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                <i id="balanceIcon" class="fas fa-eye-slash" style="font-size: 16px; color: var(--second-text); transition: color 0.3s;"></i>
+            </div>
+        </div>
+
         <div style="margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 6px 16px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(16, 185, 129, 0.2);">
             <i class="fas fa-check-circle"></i>
             账户状态正常 | 卡号: <span id="displayCardNumber">--</span>
@@ -61,12 +71,25 @@
         </div>
     </div>
 
-    <div class="geek-card trans-list">
-        <div style="padding: 20px; border-bottom: 1px solid var(--border-color);">
-            <h3 style="font-size: 16px;">最近交易动态</h3>
+    <div id="transListCard" class="geek-card trans-list">
+        <div class="trans-list-header" onclick="toggleTransactions()">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-history" style="color: var(--theme-color);"></i>
+                <h3 style="font-size: 16px; margin: 0;">最近交易动态</h3>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 12px; color: var(--second-text);">点击展开/收起</span>
+                <i id="transToggleIcon" class="fas fa-chevron-down toggle-icon"></i>
+            </div>
         </div>
-        <div id="recentTransactions">
-            <div style="text-align: center; color: var(--second-text); padding: 30px;">正在加载数据...</div>
+
+        <div class="trans-content">
+            <div id="recentTransactions">
+                <div style="text-align: center; color: var(--second-text); padding: 30px;">正在加载数据...</div>
+            </div>
+            <div style="text-align: center; padding: 15px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                <a href="javascript:showTransactionHistory()" style="color: var(--theme-color); font-size: 13px; text-decoration: none;">查看全部记录 &rarr;</a>
+            </div>
         </div>
     </div>
 </div>
@@ -100,7 +123,7 @@
         </p>
         <div style="display: flex; gap: 10px;">
             <button class="btn btn-outline" onclick="closeWithdrawModal()">取消</button>
-            <button class="btn btn-primary" style="background: var(--danger);" onclick="processWithdraw()">确认取款</button>
+            <button class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);" onclick="processWithdraw()">确认取款</button>
         </div>
     </div>
 </div>
@@ -109,11 +132,26 @@
     <div class="modal-inner" style="max-width: 600px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h3>资金流水记录</h3>
-            <span onclick="closeHistoryModal()" style="cursor: pointer; font-size: 20px;">&times;</span>
+            <span onclick="closeHistoryModal()" style="cursor: pointer; font-size: 20px; color: var(--second-text);">&times;</span>
         </div>
         <div style="max-height: 50vh; overflow-y: auto;">
-            <div id="transactionsTableBody">
-            </div>
+            <div id="transactionsTableBody"></div>
+        </div>
+    </div>
+</div>
+
+<div id="logoutModal" class="modal-wrap">
+    <div class="modal-inner" style="max-width: 400px; text-align: center;">
+        <div style="width: 60px; height: 60px; margin: 0 auto 20px auto; background: rgba(239, 68, 68, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-sign-out-alt" style="font-size: 24px; color: var(--danger);"></i>
+        </div>
+        <h3 style="margin-bottom: 10px;">确认退出登录？</h3>
+        <p style="font-size: 14px; color: var(--second-text); margin-bottom: 30px; line-height: 1.6;">
+            您的当前会话将结束，返回登录页面。<br>未保存的操作可能会丢失。
+        </p>
+        <div style="display: flex; gap: 15px;">
+            <button class="btn btn-outline" onclick="closeLogoutModal()">再看看</button>
+            <button class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);" onclick="confirmLogout()">确认退出</button>
         </div>
     </div>
 </div>
@@ -121,64 +159,12 @@
 <div id="message" class="snackbar"></div>
 <script src="/js/dashboard.js"></script>
 <script>
-    // 复用星空壁纸
     const canvas = document.getElementById('universe');
     const ctx = canvas.getContext('2d');
     let width, height, stars = [];
     function init() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; stars=[]; for(let i=0;i<80;i++){stars.push({x:Math.random()*width,y:Math.random()*height,size:Math.random()*2,speed:Math.random()*0.5});} }
     function animate() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill();s.y-=s.speed;if(s.y<0)s.y=height;}); requestAnimationFrame(animate); }
     window.addEventListener('resize', init); init(); animate();
-
-    // UI 适配
-    window.showDepositModal = () => { document.getElementById('depositModal').style.display = 'flex'; document.getElementById('depositAmount').value = ''; }
-    window.closeDepositModal = () => document.getElementById('depositModal').style.display = 'none';
-
-    window.showWithdrawModal = () => { document.getElementById('withdrawModal').style.display = 'flex'; document.getElementById('withdrawAmount').value = ''; }
-    window.closeWithdrawModal = () => document.getElementById('withdrawModal').style.display = 'none';
-
-    window.showTransactionHistory = async () => {
-        document.getElementById('historyModal').style.display = 'flex';
-        const container = document.getElementById('transactionsTableBody');
-        container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">加载中...</div>';
-        try {
-            const res = await fetch(`/api/transactions/${sessionStorage.getItem('cardNumber')}`);
-            const data = await res.json();
-            if(data.status === 'success') {
-                container.innerHTML = '';
-                if(data.transactions.length === 0) {
-                    container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">暂无记录</div>';
-                    return;
-                }
-                data.transactions.forEach(t => {
-                    const isIn = t.type === 'deposit';
-                    const html = `
-                            <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px dashed rgba(255,255,255,0.1);">
-                                <div>
-                                    <div style="font-weight:bold; color: var(--font-color);">${t.type === 'deposit' ? '存款' : '取款'}</div>
-                                    <div style="font-size:12px; color:var(--second-text);">${new Date(t.create_time).toLocaleString()}</div>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-weight:bold; font-size: 16px; color:${isIn ? 'var(--success)' : 'var(--danger)'}">
-                                        ${isIn?'+':'-'} ${Math.abs(t.amount).toFixed(2)}
-                                    </div>
-                                    <div style="font-size:12px; color:var(--second-text);">余额: ${parseFloat(t.balance_after).toFixed(2)}</div>
-                                </div>
-                            </div>
-                        `;
-                    container.innerHTML += html;
-                });
-            }
-        } catch(e) { container.innerHTML = '<div style="text-align:center;">加载失败</div>'; }
-    }
-    window.closeHistoryModal = () => document.getElementById('historyModal').style.display = 'none';
-
-    window.showMessage = (msg, type) => {
-        const el = document.getElementById('message');
-        el.textContent = msg;
-        el.className = `snackbar ${type}`;
-        el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 3000);
-    }
 </script>
 </body>
 </html>
