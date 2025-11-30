@@ -52,6 +52,7 @@ async function loadUserInfo() {
 
 // 加载余额
 async function loadBalance() {
+    showSkeleton('balanceDisplay');
     try {
         const response = await fetch(`/api/balance/${currentCardNumber}`);
         const data = await response.json();
@@ -68,11 +69,13 @@ async function loadBalance() {
     } catch (error) {
         console.error('加载余额失败:', error);
         showMessage('加载余额失败', 'error');
+        hideSkeleton('balanceDisplay');
     }
 }
 
 // 加载最近交易记录
 async function loadRecentTransactions() {
+    showSkeleton('recentTransactions');
     try {
         const response = await fetch(`/api/transactions/${currentCardNumber}`);
         const data = await response.json();
@@ -90,10 +93,12 @@ async function loadRecentTransactions() {
             });
         } else {
             transactionsContainer.innerHTML = '<div class="loading-text">暂无交易记录</div>';
+            hideSkeleton('recentTransactions');
         }
     } catch (error) {
         console.error('加载交易记录失败:', error);
         document.getElementById('recentTransactions').innerHTML = '<div class="loading-text">加载失败</div>';
+        hideSkeleton('recentTransactions');
     }
 }
 
@@ -352,3 +357,19 @@ document.addEventListener('keydown', function(event) {
         closeHistoryModal();
     }
 });
+
+document.getElementById('btnWithdrawAll').addEventListener('click', () => {
+    const cur = document.getElementById('currentBalanceWithdraw').textContent.replace(/[¥,]/g, '');
+    if (+cur <= 0) return showMessage('余额为 0', 'error');
+    document.getElementById('withdrawAmount').value = cur;
+});
+//加载动画
+function showSkeleton(containerId) {
+    const box = document.getElementById(containerId);
+    box.innerHTML = '<div class="skeleton"></div>'.repeat(containerId === 'balanceDisplay' ? 1 : 3);
+    box.classList.add('skeleton');
+}
+function hideSkeleton(containerId) {
+    const box = document.getElementById(containerId);
+    box.classList.remove('skeleton');
+}
