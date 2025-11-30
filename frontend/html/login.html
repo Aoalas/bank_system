@@ -123,11 +123,8 @@
             <div class="form-group">
                 <label for="password">密码:</label>
                 <input type="password" id="password" placeholder="请输入密码" required>
-                <label style="display:flex;align-items:center;margin-top:6px;font-size:14px;color:#555;padding-left:0;">
-                    <input type="checkbox" id="rememberMe" style="margin:0 -140px 0 -152px;">
-                    记住卡号（下次自动填写）
-                </label>
             </div>
+            
             <button type="submit">登录</button>
         </form>
         
@@ -174,17 +171,7 @@
     
                     // 保存卡号到sessionStorage
                     sessionStorage.setItem('cardNumber', cardNumber);
-                    window.onload = () => {
-                        const r = localStorage.getItem('rememberCard');
-                        if (r) {
-                            document.getElementById('cardNumber').value = r;
-                            document.getElementById('rememberMe').checked = true;
-                        }
-                    };
-                    // 登录成功时处理
-                    const remember = document.getElementById('rememberMe').checked;
-                    remember ? localStorage.setItem('rememberCard', cardNumber)
-                        : localStorage.removeItem('rememberCard');
+    
                     // 跳转到用户面板
                     setTimeout(() => {
                         window.location.href = '/dashboard.html';
@@ -200,7 +187,6 @@
                 messageDiv.style.display = 'block';
                 console.error('登录错误:', error);
             }
-
         });
         
     </script>
