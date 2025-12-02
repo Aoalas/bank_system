@@ -35,6 +35,18 @@ CREATE TABLE IF NOT EXISTS Transactions (
     FOREIGN KEY (card_id) REFERENCES Cards(card_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS messages (     
+    id INTEGER PRIMARY KEY AUTOINCREMENT,     
+    ecipient_card TEXT NOT NULL,        
+    sender_name TEXT,
+    type TEXT NOT NULL,                  
+    amount REAL DEFAULT 0,               
+    content TEXT,                        
+    is_read INTEGER DEFAULT 0,           
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP 
+);
+
+
 -- 清空现有
 DELETE FROM Transactions;
 DELETE FROM Cards;

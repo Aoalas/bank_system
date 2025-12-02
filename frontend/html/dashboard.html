@@ -12,12 +12,22 @@
 
 <div class="container-width">
     <nav class="dash-header">
-        <div style="font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-university" style="color: var(--theme-color);"></i>
-            <span>银行储蓄系统</span>
+        <div style="display: flex; flex-direction: column;">
+            <div style="font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-university" style="color: var(--anzhiyu-theme);"></i>
+                <span>银行储蓄系统</span>
+            </div>
+            <div id="greeting" style="font-size: 12px; color: var(--anzhiyu-secondtext); margin-left: 30px; margin-top: 2px;">
+                正在加载问候...
+            </div>
         </div>
-        <div style="font-size: 14px; color: var(--second-text); display: flex; align-items: center; gap: 15px;">
-            <span>用户：<b id="userName" style="color: var(--font-color);">...</b></span>
+
+        <div id="sysTime" style="font-family: 'Microsoft YaHei', monospace; color: var(--anzhiyu-fontcolor); font-weight: bold; font-size: 16px; letter-spacing: 1px; text-align: center;">
+            --:--:--
+        </div>
+
+        <div style="font-size: 14px; color: var(--anzhiyu-secondtext); display: flex; align-items: center; gap: 15px;">
+            <span>用户：<b id="userName" style="color: var(--anzhiyu-fontcolor);">...</b></span>
             <span style="opacity: 0.3">|</span>
             <span id="cardNumberDisplay" style="font-family: monospace;">...</span>
             <button onclick="showLogoutModal()" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s;">
@@ -27,21 +37,15 @@
     </nav>
 
     <div class="geek-card balance-card">
-        <p style="color: var(--second-text); font-size: 14px; margin-bottom: 10px;">账户总资产折合 (CNY)</p>
-
+        <p style="color: var(--anzhiyu-secondtext); font-size: 14px; margin-bottom: 10px;">账户总资产折合 (CNY)</p>
         <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin: 10px 0 25px 0;">
             <div id="balanceDisplay" class="balance-num" style="margin: 0; line-height: 1;">¥ ****</div>
-            <div onclick="toggleBalance()" title="显示/隐藏金额"
-                 style="cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1);"
-                 onmouseover="this.style.background='rgba(255,255,255,0.15)'"
-                 onmouseout="this.style.background='rgba(255,255,255,0.05)'">
-                <i id="balanceIcon" class="fas fa-eye-slash" style="font-size: 16px; color: var(--second-text); transition: color 0.3s;"></i>
+            <div onclick="toggleBalance()" title="显示/隐藏" style="cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                <i id="balanceIcon" class="fas fa-eye-slash" style="font-size: 16px; color: var(--anzhiyu-secondtext);"></i>
             </div>
         </div>
-
         <div style="margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 6px 16px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(16, 185, 129, 0.2);">
-            <i class="fas fa-check-circle"></i>
-            账户状态正常 | 卡号: <span id="displayCardNumber">--</span>
+            <i class="fas fa-check-circle"></i> 状态正常
         </div>
     </div>
 
@@ -49,112 +53,110 @@
         <div class="geek-card menu-item" onclick="showDepositModal()">
             <div class="menu-icon"><i class="fas fa-piggy-bank"></i></div>
             <h3>存款充值</h3>
-            <p style="font-size: 12px; color: var(--second-text); margin-top: 5px;">实时存入资金</p>
         </div>
-
         <div class="geek-card menu-item" onclick="showWithdrawModal()">
             <div class="menu-icon"><i class="fas fa-wallet"></i></div>
             <h3>余额取现</h3>
-            <p style="font-size: 12px; color: var(--second-text); margin-top: 5px;">快速提取现金</p>
         </div>
-
+        <div class="geek-card menu-item" onclick="showTransferModal()">
+            <div class="menu-icon"><i class="fas fa-exchange-alt"></i></div>
+            <h3>转账汇款</h3>
+        </div>
+        <div class="geek-card menu-item" onclick="showMessagesModal()" style="position: relative;">
+            <div class="menu-icon" id="msgIconWrapper">
+                <i class="fas fa-envelope"></i>
+                <div id="msgBadge" class="badge-dot"></div>
+            </div>
+            <h3>消息通知</h3>
+        </div>
         <div class="geek-card menu-item" onclick="showTransactionHistory()">
             <div class="menu-icon"><i class="fas fa-file-invoice"></i></div>
             <h3>交易明细</h3>
-            <p style="font-size: 12px; color: var(--second-text); margin-top: 5px;">查看资金流水</p>
         </div>
-
         <div class="geek-card menu-item" onclick="showAccountInfo()">
             <div class="menu-icon"><i class="fas fa-id-card"></i></div>
             <h3>账户信息</h3>
-            <p style="font-size: 12px; color: var(--second-text); margin-top: 5px;">查看个人档案</p>
         </div>
     </div>
 
     <div id="transListCard" class="geek-card trans-list">
         <div class="trans-list-header" onclick="toggleTransactions()">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-history" style="color: var(--theme-color);"></i>
+                <i class="fas fa-history" style="color: var(--anzhiyu-theme);"></i>
                 <h3 style="font-size: 16px; margin: 0;">最近交易动态</h3>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 12px; color: var(--second-text);">点击展开/收起</span>
-                <i id="transToggleIcon" class="fas fa-chevron-down toggle-icon"></i>
-            </div>
+            <i id="transToggleIcon" class="fas fa-chevron-down toggle-icon"></i>
         </div>
-
         <div class="trans-content">
-            <div id="recentTransactions">
-                <div style="text-align: center; color: var(--second-text); padding: 30px;">正在加载数据...</div>
-            </div>
-            <div style="text-align: center; padding: 15px; border-top: 1px dashed rgba(255,255,255,0.1);">
-                <a href="javascript:showTransactionHistory()" style="color: var(--theme-color); font-size: 13px; text-decoration: none;">查看全部记录 &rarr;</a>
-            </div>
+            <div id="recentTransactions"></div>
         </div>
     </div>
 </div>
 
-<div id="depositModal" class="modal-wrap">
-    <div class="modal-inner">
-        <h3 style="margin-bottom: 20px; text-align: center;">存款操作</h3>
-        <div class="input-group">
-            <input type="number" id="depositAmount" placeholder=" " style="font-size: 20px; font-weight: bold; color: var(--success);">
-            <label>请输入存款金额 (元)</label>
-        </div>
-        <p style="font-size: 12px; color: var(--second-text); margin-bottom: 20px; text-align: center;">
-            当前余额: <span id="currentBalanceDeposit">--</span>
-        </p>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-outline" onclick="closeDepositModal()">取消</button>
-            <button class="btn btn-primary" onclick="processDeposit()">确认存款</button>
-        </div>
-    </div>
-</div>
+<div id="depositModal" class="modal-wrap"><div class="modal-inner">
+    <h3 style="text-align:center; margin-bottom:20px;">存款操作</h3>
+    <div class="input-group"><input type="number" id="depositAmount" placeholder=" "><label>金额 (元)</label></div>
+    <div style="display:flex; gap:10px;"><button class="btn btn-outline" onclick="closeDepositModal()">取消</button><button class="btn btn-primary" onclick="processDeposit()">确认</button></div>
+</div></div>
 
-<div id="withdrawModal" class="modal-wrap">
-    <div class="modal-inner">
-        <h3 style="margin-bottom: 20px; text-align: center; color: var(--danger);">取款操作</h3>
-        <div class="input-group">
-            <input type="number" id="withdrawAmount" placeholder=" " style="font-size: 20px; font-weight: bold; color: var(--danger);">
-            <label>请输入取款金额 (元)</label>
-        </div>
-        <p style="font-size: 12px; color: var(--second-text); margin-bottom: 20px; text-align: center;">
-            当前余额: <span id="currentBalanceWithdraw">--</span>
-        </p>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-outline" onclick="closeWithdrawModal()">取消</button>
-            <button class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);" onclick="processWithdraw()">确认取款</button>
-        </div>
-    </div>
-</div>
+<div id="withdrawModal" class="modal-wrap"><div class="modal-inner">
+    <h3 style="text-align:center; margin-bottom:20px; color:var(--danger);">取款操作</h3>
+    <div class="input-group"><input type="number" id="withdrawAmount" placeholder=" "><label>金额 (元)</label></div>
+    <div style="display:flex; gap:10px;"><button class="btn btn-outline" onclick="closeWithdrawModal()">取消</button><button class="btn btn-primary" style="background:var(--danger);" onclick="processWithdraw()">确认</button></div>
+</div></div>
 
-<div id="historyModal" class="modal-wrap">
-    <div class="modal-inner" style="max-width: 600px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3>资金流水记录</h3>
-            <span onclick="closeHistoryModal()" style="cursor: pointer; font-size: 20px; color: var(--second-text);">&times;</span>
-        </div>
-        <div style="max-height: 50vh; overflow-y: auto;">
-            <div id="transactionsTableBody"></div>
-        </div>
+<div id="transferModal" class="modal-wrap"><div class="modal-inner">
+    <h3 style="text-align:center; margin-bottom:20px;">转账汇款</h3>
+    <div class="input-group" style="display:flex; gap:10px;"><div style="flex:1; position:relative;"><input type="text" id="transferToCard" placeholder=" "><label>对方卡号</label></div><button class="btn btn-outline" onclick="queryTransferName()" style="width:auto; padding: 8px 15px;">查询</button></div>
+    <div id="transferNameDisplay" style="display:none; margin-bottom:15px; color:var(--anzhiyu-theme); font-size:14px;">收款人：<span id="transferToName" style="font-weight:bold;"></span></div>
+    <div class="input-group"><input type="number" id="transferAmount" placeholder=" "><label>金额</label></div>
+    <div class="input-group"><input type="text" id="transferMsg" placeholder=" "><label>留言 (可选)</label></div>
+    <div style="margin-bottom:20px; cursor: pointer; font-size:14px; color:var(--anzhiyu-secondtext);" onclick="toggleAnon()">
+        <i id="anonIcon" class="far fa-square"></i> 匿名转账
+        <input type="checkbox" id="isAnonymous" style="display: none;">
     </div>
-</div>
+    <div style="display:flex; gap:10px;"><button class="btn btn-outline" onclick="closeTransferModal()">取消</button><button class="btn btn-primary" onclick="confirmTransferStep()">下一步</button></div>
+</div></div>
 
-<div id="logoutModal" class="modal-wrap">
-    <div class="modal-inner" style="max-width: 400px; text-align: center;">
-        <div style="width: 60px; height: 60px; margin: 0 auto 20px auto; background: rgba(239, 68, 68, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-            <i class="fas fa-sign-out-alt" style="font-size: 24px; color: var(--danger);"></i>
-        </div>
-        <h3 style="margin-bottom: 10px;">确认退出登录？</h3>
-        <p style="font-size: 14px; color: var(--second-text); margin-bottom: 30px; line-height: 1.6;">
-            您的当前会话将结束，返回登录页面。<br>未保存的操作可能会丢失。
-        </p>
-        <div style="display: flex; gap: 15px;">
-            <button class="btn btn-outline" onclick="closeLogoutModal()">再看看</button>
-            <button class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);" onclick="confirmLogout()">确认退出</button>
-        </div>
+<div id="transferConfirmModal" class="modal-wrap" style="z-index: 2100;"><div class="modal-inner" style="text-align: center;">
+    <div style="width: 60px; height: 60px; margin: 0 auto 20px auto; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-check" style="font-size: 24px; color: var(--anzhiyu-theme);"></i>
     </div>
-</div>
+    <h3 style="margin-bottom:5px;">确认转账信息</h3>
+    <div class="confirm-card">
+        <div class="confirm-row"><span class="confirm-label">收款人</span><span class="confirm-value" id="confirmName">--</span></div>
+        <div class="confirm-row"><span class="confirm-label">收款卡号</span><span class="confirm-value" id="confirmCard">--</span></div>
+        <div style="height:1px; background:var(--border-color); margin:10px 0;"></div>
+        <div class="confirm-row"><span class="confirm-label">转账金额</span><span class="confirm-value money" id="confirmAmount">--</span></div>
+    </div>
+    <div style="display:flex; gap:10px;">
+        <button class="btn btn-outline" onclick="closeTransferConfirm()">返回</button>
+        <button class="btn btn-primary" onclick="submitTransfer()">确定转账</button>
+    </div>
+</div></div>
+
+<div id="messagesModal" class="modal-wrap"><div class="modal-inner" style="max-width:500px; padding:0; display:flex; flex-direction:column; max-height:80vh;">
+    <div style="padding:20px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0;">消息通知</h3>
+        <span onclick="closeMessagesModal()" style="cursor:pointer; font-size:20px;">&times;</span>
+    </div>
+    <div id="messageList" style="overflow-y:auto; flex:1;"></div>
+</div></div>
+
+<div id="msgDetailModal" class="modal-wrap" style="z-index: 2200;"><div class="modal-inner">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <div id="msgIconType" style="width: 50px; height: 50px; background: rgba(16,185,129,0.1); color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+            <i class="fas fa-coins" style="font-size: 24px;"></i>
+        </div>
+        <h3 id="detailTitle" style="margin:0;">消息详情</h3>
+    </div>
+    <div class="confirm-card" id="msgDetailContentBox"></div>
+    <button class="btn btn-primary" onclick="closeMsgDetail()">知道了</button>
+</div></div>
+
+<div id="historyModal" class="modal-wrap"><div class="modal-inner" style="max-width:600px;"><div style="display:flex; justify-content:space-between; margin-bottom:20px;"><h3>交易记录</h3><span onclick="closeHistoryModal()" style="cursor:pointer;">&times;</span></div><div style="max-height:500px; overflow-y:auto;"><div id="transactionsTableBody"></div></div></div></div>
+
+<div id="logoutModal" class="modal-wrap"><div class="modal-inner" style="text-align:center;"><i class="fas fa-sign-out-alt" style="font-size:40px; color:var(--danger); margin-bottom:20px;"></i><h3 style="margin-bottom:10px;">确认退出？</h3><div style="display:flex; gap:15px; margin-top:30px;"><button class="btn btn-outline" onclick="closeLogoutModal()">取消</button><button class="btn btn-primary" style="background:var(--danger);" onclick="confirmLogout()">退出</button></div></div></div>
 
 <div id="message" class="snackbar"></div>
 <script src="/js/dashboard.js"></script>
