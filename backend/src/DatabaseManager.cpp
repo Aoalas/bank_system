@@ -33,6 +33,7 @@ DatabaseManager& DatabaseManager::getInstance() {
 
 void DatabaseManager::connect() {
     try {
+        // ★★★ 请确保这里的密码和你的数据库一致 ★★★
         connection.reset(driver->connect("tcp://127.0.0.1:3306", "bank_admin", "BankAdmin123!"));
         connection->setSchema("bank_system");
         std::cout << "数据库连接成功!" << std::endl;
@@ -247,7 +248,7 @@ bool DatabaseManager::createAccount(const std::string& name, const std::string& 
     }
 }
 
-// 9. 转账 (FIX: 使用标准类型)
+// 9. 转账
 bool DatabaseManager::transfer(const std::string& from_card, const std::string& to_card, double amount, const std::string& message, bool is_anonymous) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     if (from_card == to_card || amount <= 0) return false;
@@ -259,7 +260,6 @@ bool DatabaseManager::transfer(const std::string& from_card, const std::string& 
         int srcId = 0;
         int dstId = 0;
 
-        // 1. 查付款人
         {
             std::unique_ptr<sql::PreparedStatement> src(connection->prepareStatement("SELECT card_id, balance FROM cards WHERE card_number = ? FOR UPDATE"));
             src->setString(1, from_card);
@@ -269,7 +269,6 @@ bool DatabaseManager::transfer(const std::string& from_card, const std::string& 
             srcId = rs->getInt("card_id");
         }
 
-        // 2. 查收款人
         {
             std::unique_ptr<sql::PreparedStatement> dst(connection->prepareStatement("SELECT card_id FROM cards WHERE card_number = ?"));
             dst->setString(1, to_card);
@@ -278,24 +277,20 @@ bool DatabaseManager::transfer(const std::string& from_card, const std::string& 
             dstId = rd->getInt("card_id");
         }
 
-        // 3. 扣款
         std::unique_ptr<sql::PreparedStatement> upd1(connection->prepareStatement("UPDATE cards SET balance = balance - ? WHERE card_id = ?"));
         upd1->setDouble(1, amount); upd1->setInt(2, srcId); upd1->executeUpdate();
 
-        // 4. 加款
         std::unique_ptr<sql::PreparedStatement> upd2(connection->prepareStatement("UPDATE cards SET balance = balance + ? WHERE card_id = ?"));
         upd2->setDouble(1, amount); upd2->setInt(2, dstId); upd2->executeUpdate();
 
-        // 5. 记录流水 (使用 'withdraw'，描述中体现转账)
+        // 记录流水 - 使用标准类型 withdraw/deposit
         std::unique_ptr<sql::PreparedStatement> log1(connection->prepareStatement("INSERT INTO transactions (card_id, type, amount, balance_after, description) VALUES (?, 'withdraw', ?, (SELECT balance FROM cards WHERE card_id=?), ?)"));
         log1->setInt(1, srcId); log1->setDouble(2, amount); log1->setInt(3, srcId); log1->setString(4, "转账给 " + to_card); log1->executeUpdate();
 
         std::string sName = is_anonymous ? "匿名用户" : getUserName(from_card);
-        // 6. 记录流水 (使用 'deposit'，描述中体现转账)
         std::unique_ptr<sql::PreparedStatement> log2(connection->prepareStatement("INSERT INTO transactions (card_id, type, amount, balance_after, description) VALUES (?, 'deposit', ?, (SELECT balance FROM cards WHERE card_id=?), ?)"));
         log2->setInt(1, dstId); log2->setDouble(2, amount); log2->setInt(3, dstId); log2->setString(4, "收到 " + sName + " 转账"); log2->executeUpdate();
 
-        // 7. 发消息
         std::unique_ptr<sql::PreparedStatement> msg(connection->prepareStatement("INSERT INTO messages (recipient_card, sender_name, type, amount, content) VALUES (?, ?, 'transfer', ?, ?)"));
         msg->setString(1, to_card); msg->setString(2, sName); msg->setDouble(3, amount); msg->setString(4, message); msg->executeUpdate();
 
@@ -370,7 +365,7 @@ bool DatabaseManager::sendSystemMessage(const std::string& to_card, const std::s
     } catch (...) { return false; }
 }
 
-// 14. 更新用户信息 (新增)
+// 14. 更新用户信息
 bool DatabaseManager::updateUserInfo(const std::string& cardNumber, const std::string& name, const std::string& idCard, const std::string& phone, const std::string& address) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -401,4 +396,31 @@ bool DatabaseManager::updateUserInfo(const std::string& cardNumber, const std::s
         std::cerr << "Update User Error: " << e.what() << std::endl;
         return false;
     }
+}
+
+// 15. 验证身份 (忘记密码)
+bool DatabaseManager::verifyIdentity(const std::string& cardNumber, const std::string& name, const std::string& phone) {
+    std::lock_guard<std::recursive_mutex> lock(db_mutex);
+    try {
+        if (!isConnected()) connect();
+        if (!connection) return false;
+        std::unique_ptr<sql::PreparedStatement> p(connection->prepareStatement(
+            "SELECT c.card_id FROM cards c JOIN users u ON c.user_id = u.user_id WHERE c.card_number = ? AND u.name = ? AND u.phone = ?"
+        ));
+        p->setString(1, cardNumber); p->setString(2, name); p->setString(3, phone);
+        std::unique_ptr<sql::ResultSet> rs(p->executeQuery());
+        return rs->next();
+    } catch (...) { return false; }
+}
+
+// 16. 修改密码 (使用MD5加密)
+bool DatabaseManager::updatePassword(const std::string& cardNumber, const std::string& newPassword) {
+    std::lock_guard<std::recursive_mutex> lock(db_mutex);
+    try {
+        if (!isConnected()) connect();
+        if (!connection) return false;
+        std::unique_ptr<sql::PreparedStatement> p(connection->prepareStatement("UPDATE cards SET password_hash = MD5(?) WHERE card_number = ?"));
+        p->setString(1, newPassword); p->setString(2, cardNumber);
+        return p->executeUpdate() > 0;
+    } catch (...) { return false; }
 }

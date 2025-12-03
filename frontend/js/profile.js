@@ -1,13 +1,11 @@
 let currentCardNumber = '';
 let realBalance = 0;
-let isBalanceHidden = true; // 默认隐藏余额
+let isBalanceHidden = true;
+let snackbarTimer = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     currentCardNumber = sessionStorage.getItem('cardNumber');
-    if (!currentCardNumber) {
-        window.location.href = '/';
-        return;
-    }
+    if (!currentCardNumber) { window.location.href = '/'; return; }
     loadProfile();
 });
 
@@ -15,25 +13,17 @@ async function loadProfile() {
     try {
         const response = await fetch(`/api/userinfo/${currentCardNumber}`);
         const data = await response.json();
-
         if (data.status === 'success') {
-            // 填充主展示页面
             setInput('infoName', data.name);
             setInput('infoIdCard', data.id_card);
             setInput('infoPhone', data.phone);
             setInput('infoAddress', data.address || '未填写');
             setInput('infoCardNumber', data.card_number);
-
             realBalance = parseFloat(data.balance).toFixed(2);
-            updateBalanceDisplay(); // 更新余额显示状态
-
+            updateBalanceDisplay();
             setInput('infoDate', new Date(data.create_time).toLocaleString());
-        } else {
-            showMessage(data.message || '获取信息失败', 'error');
-        }
-    } catch (error) {
-        showMessage('网络连接错误', 'error');
-    }
+        } else { showMessage('加载失败', 'error'); }
+    } catch (e) { showMessage('网络错误', 'error'); }
 }
 
 function setInput(id, value) {
@@ -41,7 +31,6 @@ function setInput(id, value) {
     if(el) el.value = value;
 }
 
-// === 余额隐私切换 ===
 function toggleProfileBalance() {
     isBalanceHidden = !isBalanceHidden;
     updateBalanceDisplay();
@@ -109,11 +98,34 @@ async function submitEdit() {
         phone: phone,
         address: address
     };
+    try {
+        const res = await fetch('/api/user/update', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+        const ret = await res.json();
+        showMessage(ret.status==='success'?'保存成功':'保存失败', ret.status==='success'?'success':'error');
+    } catch (e) { showMessage('网络错误', 'error'); }
+}
+
+// === 修改密码 ===
+function showChangePwdModal() {
+    document.getElementById('changePwdModal').style.display = 'flex';
+    document.getElementById('oldPwd').value = '';
+    document.getElementById('newPwd').value = '';
+    document.getElementById('confirmPwd').value = '';
+}
+function closeChangePwdModal() { document.getElementById('changePwdModal').style.display = 'none'; }
+
+async function submitChangePwd() {
+    const oldP = document.getElementById('oldPwd').value;
+    const newP = document.getElementById('newPwd').value;
+    const cP = document.getElementById('confirmPwd').value;
+
+    if(!oldP || !newP) return showMessage('请输入密码', 'error');
+    if(newP !== cP) return showMessage('两次新密码不一致', 'error');
 
     try {
-        const res = await fetch('/api/user/update', {
+        const res = await fetch('/api/password/change', {
             method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
+            body: JSON.stringify({ card_number: currentCardNumber, old_password: oldP, new_password: newP })
         });
         const ret = await res.json();
 
@@ -127,35 +139,21 @@ async function submitEdit() {
     } catch (e) { showMessage('保存失败', 'error'); }
 }
 
-// === 消息提示 (复用 Dashboard 的逻辑) ===
-let snackbarTimer = null;
 function showMessage(msg, type) {
     const oldEl = document.getElementById('message');
     if(!oldEl) return;
-
     if (snackbarTimer) { clearTimeout(snackbarTimer); snackbarTimer = null; }
-
     const newEl = oldEl.cloneNode(false);
     oldEl.parentNode.replaceChild(newEl, oldEl);
-
     newEl.textContent = msg;
     newEl.className = `snackbar ${type}`;
     newEl.style.display = 'block';
-
     snackbarTimer = setTimeout(() => {
         newEl.classList.add('hide');
-        newEl.addEventListener('animationend', () => {
-            if(newEl.classList.contains('hide')) {
-                newEl.style.display = 'none';
-                newEl.classList.remove('hide');
-            }
-        }, {once:true});
+        newEl.addEventListener('animationend', () => { if(newEl.classList.contains('hide')) newEl.style.display = 'none'; }, {once:true});
     }, 3000);
 }
 
-// 点击外部关闭弹窗
 window.onclick = function(event) {
-    if (event.target.id === 'editProfileModal') {
-        closeEditModal();
-    }
+    if (event.target.id === 'changePwdModal') closeChangePwdModal();
 }

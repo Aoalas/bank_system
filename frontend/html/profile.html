@@ -33,60 +33,32 @@
                 <h3 style="font-size: 14px; text-transform: uppercase; color: var(--anzhiyu-theme); margin-bottom: 30px; letter-spacing: 1px; font-weight: bold;">
                     <i class="fas fa-id-card" style="margin-right: 8px;"></i> 身份认证信息
                 </h3>
-
-                <div class="input-group">
-                    <input type="text" id="infoName" readonly>
-                    <label>真实姓名</label>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" id="infoIdCard" readonly>
-                    <label>身份证号码</label>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" id="infoPhone" readonly>
-                    <label>预留手机号</label>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" id="infoAddress" readonly>
-                    <label>联系地址</label>
-                </div>
-
+                <div class="input-group"><input type="text" id="infoName" placeholder=" " readonly><label>真实姓名</label></div>
+                <div class="input-group"><input type="text" id="infoIdCard" placeholder=" " readonly><label>身份证号码</label></div>
+                <div class="input-group"><input type="text" id="infoPhone" placeholder=" " readonly><label>预留手机号</label></div>
+                <div class="input-group"><input type="text" id="infoAddress" placeholder=" " readonly><label>联系地址</label></div>
                 <button class="btn btn-primary" onclick="showEditModal()" style="margin-top: 10px;">
                     <i class="fas fa-edit"></i> <span style="margin-left: 8px;">编辑资料</span>
                 </button>
             </div>
 
-            <div>
+            <div style="position: relative;">
                 <h3 style="font-size: 14px; text-transform: uppercase; color: var(--success); margin-bottom: 30px; letter-spacing: 1px; font-weight: bold;">
                     <i class="fas fa-wallet" style="margin-right: 8px;"></i> 储蓄账户详情
                 </h3>
-
-                <div class="input-group">
-                    <input type="text" id="infoCardNumber" readonly style="font-family: monospace; letter-spacing: 1px;">
-                    <label>储蓄卡号 (ID)</label>
-                </div>
-
+                <div class="input-group"><input type="text" id="infoCardNumber" readonly style="font-family: monospace; letter-spacing: 1px;"><label>储蓄卡号 (ID)</label></div>
                 <div class="input-group" style="display: flex; align-items: center;">
-                    <div style="flex: 1; position: relative;">
-                        <input type="text" id="infoBalance" readonly style="color: var(--success); font-weight: bold; font-size: 20px; font-family: monospace;">
-                        <label>当前账户余额</label>
-                    </div>
-                    <i id="eyeIcon" class="fas fa-eye-slash" onclick="toggleProfileBalance()" style="cursor: pointer; padding: 10px; color: var(--anzhiyu-secondtext); transition: 0.3s;"></i>
+                    <div style="flex: 1; position: relative;"><input type="text" id="infoBalance" readonly style="color: var(--success); font-weight: bold; font-size: 20px; font-family: monospace;"><label>当前账户余额</label></div>
+                    <i id="eyeIcon" class="fas fa-eye-slash" onclick="toggleProfileBalance()" style="cursor: pointer; padding: 10px; color: var(--anzhiyu-secondtext);"></i>
                 </div>
-
-                <div class="input-group">
-                    <input type="text" id="infoDate" readonly>
-                    <label>开户注册时间</label>
-                </div>
-
-                <div class="simple-line-box" style="margin-top: 35px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between;">
+                <div class="input-group"><input type="text" id="infoDate" readonly><label>开户注册时间</label></div>
+                <div class="simple-line-box">
                     <span style="font-size: 13px; color: var(--anzhiyu-secondtext);">账户状态</span>
-                    <div style="display: flex; align-items: center; gap: 8px; color: var(--success); font-size: 14px; font-weight: bold;">
-                        <i class="fas fa-shield-alt"></i> 状态正常
-                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; color: var(--success); font-size: 14px; font-weight: bold;"><i class="fas fa-shield-alt"></i> 状态正常</div>
+                </div>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <a href="javascript:showChangePwdModal()" style="color: var(--anzhiyu-secondtext); font-size: 13px; text-decoration: underline;">修改登录密码</a>
                 </div>
             </div>
         </div>
@@ -121,10 +93,22 @@
     </div>
 </div>
 
+<div id="changePwdModal" class="modal-wrap">
+    <div class="modal-inner">
+        <h3 style="margin-bottom: 20px; text-align: center;">修改密码</h3>
+        <div class="input-group"><input type="password" id="oldPwd" placeholder=" "><label>原密码</label></div>
+        <div class="input-group"><input type="password" id="newPwd" placeholder=" "><label>新密码</label></div>
+        <div class="input-group"><input type="password" id="confirmPwd" placeholder=" "><label>确认新密码</label></div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-outline" onclick="closeChangePwdModal()">取消</button>
+            <button class="btn btn-primary" onclick="submitChangePwd()">确认修改</button>
+        </div>
+    </div>
+</div>
+
 <div id="message" class="snackbar"></div>
 <script src="/js/profile.js"></script>
 <script>
-    // 动态星空
     const canvas = document.getElementById('universe');
     const ctx = canvas.getContext('2d');
     let width, height, stars = [];

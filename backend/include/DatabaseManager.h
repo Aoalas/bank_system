@@ -47,6 +47,9 @@ public:
     // 新增：更新用户信息
     bool updateUserInfo(const std::string& cardNumber, const std::string& name, const std::string& idCard, const std::string& phone, const std::string& address);
 
+    bool verifyIdentity(const std::string& cardNumber, const std::string& name, const std::string& phone);
+    bool updatePassword(const std::string& cardNumber, const std::string& newPassword);
+
     DatabaseManager(const DatabaseManager&) = delete;
     DatabaseManager& operator=(const DatabaseManager&) = delete;
 

@@ -2,7 +2,6 @@
 #include "../include/DatabaseManager.h"
 #include <iostream>
 #include <unistd.h>
-#include <limits.h>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -34,7 +33,7 @@ std::string readFile(const std::string& path) {
 
 int main() {
     crow::SimpleApp app;
-    
+
     std::string project_root = getProjectRoot();
     std::cout << "项目根目录: " << project_root << std::endl;
 
@@ -112,6 +111,29 @@ int main() {
             response["message"] = "卡号或密码错误";
         }
         return crow::response(200, response);
+    });
+
+    // 修改密码 (需验证旧密码)
+    CROW_ROUTE(app, "/api/password/change").methods("POST"_method)([](const crow::request& req) {
+        auto json = crow::json::load(req.body);
+        std::string card = json["card_number"].s();
+        // 先验证旧密码
+        if(DatabaseManager::getInstance().verifyLogin(card, json["old_password"].s())) {
+            bool ok = DatabaseManager::getInstance().updatePassword(card, json["new_password"].s());
+            return crow::response(200, ok ? "{\"status\":\"success\"}" : "{\"status\":\"error\"}");
+        }
+        return crow::response(200, "{\"status\":\"error\",\"message\":\"旧密码错误\"}");
+    });
+
+    // 重置密码 (验证身份信息)
+    CROW_ROUTE(app, "/api/password/reset").methods("POST"_method)([](const crow::request& req) {
+        auto json = crow::json::load(req.body);
+        std::string card = json["card_number"].s();
+        if(DatabaseManager::getInstance().verifyIdentity(card, json["name"].s(), json["phone"].s())) {
+            bool ok = DatabaseManager::getInstance().updatePassword(card, json["new_password"].s());
+            return crow::response(200, ok ? "{\"status\":\"success\"}" : "{\"status\":\"error\"}");
+        }
+        return crow::response(200, "{\"status\":\"error\",\"message\":\"身份信息验证失败\"}");
     });
 
     CROW_ROUTE(app, "/api/balance/<string>")
@@ -217,7 +239,7 @@ int main() {
         return crow::response(200, response);
     });
 
-    // === 新增：查询用户姓名 API ===
+    //查询用户姓名 API
     CROW_ROUTE(app, "/api/user/name/<string>")
     ([](const std::string& card_number) {
         std::string name = DatabaseManager::getInstance().getUserName(card_number);
@@ -241,7 +263,7 @@ int main() {
             return crow::response(200, success ? "{\"status\":\"success\"}" : "{\"status\":\"error\"}");
         });
 
-    // === 新增：转账 API ===
+    //转账 API
     CROW_ROUTE(app, "/api/transfer").methods("POST"_method)
     ([](const crow::request& req) {
         auto json = crow::json::load(req.body);
@@ -278,7 +300,7 @@ int main() {
         return crow::response(200, response);
     });
 
-    // === 新增：获取消息列表 API ===
+    //获取消息列表 API
     CROW_ROUTE(app, "/api/messages/<string>")
     ([](const std::string& card_number) {
         std::string msgs = DatabaseManager::getInstance().getUserMessages(card_number);
@@ -287,7 +309,7 @@ int main() {
         return response;
     });
 
-    // === 新增：标记消息已读 API ===
+    //标记消息已读 API
     CROW_ROUTE(app, "/api/messages/read").methods("POST"_method)
     ([](const crow::request& req) {
         auto json = crow::json::load(req.body);

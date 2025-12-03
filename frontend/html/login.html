@@ -32,6 +32,10 @@
             <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
                 登录系统 <i class="fas fa-arrow-right"></i>
             </button>
+
+            <div style="text-align: right; margin-top: 10px;">
+                <a href="javascript:showResetModal()" style="color: var(--anzhiyu-secondtext); font-size: 12px;">忘记密码?</a>
+            </div>
         </form>
 
         <div style="text-align: center; margin-top: 25px;">
@@ -52,10 +56,30 @@
     </div>
 </div>
 
+<div id="resetModal" class="modal-wrap">
+    <div class="modal-inner">
+        <h3 style="text-align: center; margin-bottom: 20px;">重置密码</h3>
+        <p style="font-size: 12px; color: var(--anzhiyu-secondtext); margin-bottom: 15px; text-align: center;">请验证身份以设置新密码</p>
+
+        <div class="input-group"><input type="text" id="rstCard" placeholder=" "><label>储蓄卡号</label></div>
+        <div class="input-group"><input type="text" id="rstName" placeholder=" "><label>真实姓名</label></div>
+        <div class="input-group"><input type="text" id="rstPhone" placeholder=" "><label>预留手机号</label></div>
+
+        <div style="height: 1px; background: var(--style-border); margin: 15px 0;"></div>
+
+        <div class="input-group"><input type="password" id="rstNewPwd" placeholder=" "><label>设置新密码</label></div>
+        <div class="input-group"><input type="password" id="rstConfirmPwd" placeholder=" "><label>确认新密码</label></div>
+
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-outline" onclick="closeResetModal()">取消</button>
+            <button class="btn btn-primary" onclick="submitReset()">重置密码</button>
+        </div>
+    </div>
+</div>
+
 <div id="message" class="snackbar"></div>
 
 <script>
-    // 动态星空壁纸逻辑
     const canvas = document.getElementById('universe');
     const ctx = canvas.getContext('2d');
     let width, height, stars = [];
@@ -96,7 +120,7 @@
     // 登录逻辑
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const btn = this.querySelector('button');
+        const btn = this.querySelector('button[type="submit"]');
         const originalHTML = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> 验证中...';
         btn.style.opacity = '0.7';
@@ -106,8 +130,7 @@
 
         try {
             const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ card_number: cardNumber, password: password })
             });
             const result = await res.json();
@@ -118,22 +141,63 @@
                 setTimeout(() => window.location.href = '/dashboard.html', 800);
             } else {
                 showToast(result.message || '登录失败', 'error');
-                btn.innerHTML = originalHTML;
-                btn.style.opacity = '1';
+                btn.innerHTML = originalHTML; btn.style.opacity = '1';
             }
         } catch (error) {
             showToast('服务器连接失败', 'error');
-            btn.innerHTML = originalHTML;
-            btn.style.opacity = '1';
+            btn.innerHTML = originalHTML; btn.style.opacity = '1';
         }
     });
 
+    // === 重置密码逻辑 ===
+    function showResetModal() { document.getElementById('resetModal').style.display = 'flex'; }
+    function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
+
+    async function submitReset() {
+        const card = document.getElementById('rstCard').value;
+        const name = document.getElementById('rstName').value;
+        const phone = document.getElementById('rstPhone').value;
+        const newPwd = document.getElementById('rstNewPwd').value;
+        const cfmPwd = document.getElementById('rstConfirmPwd').value;
+
+        if(!card || !name || !phone || !newPwd) return showToast('请填写完整信息', 'error');
+        if(newPwd !== cfmPwd) return showToast('两次密码不一致', 'error');
+
+        try {
+            const res = await fetch('/api/password/reset', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({card_number: card, name: name, phone: phone, new_password: newPwd})
+            });
+            const ret = await res.json();
+            if(ret.status === 'success') {
+                showToast('密码重置成功，请登录', 'success');
+                closeResetModal();
+            } else {
+                showToast(ret.message || '验证失败，信息不匹配', 'error');
+            }
+        } catch(e) { showToast('网络错误', 'error'); }
+    }
+
+    let snackbarTimer = null;
     function showToast(msg, type) {
-        const el = document.getElementById('message');
-        el.textContent = msg;
-        el.className = `snackbar ${type}`;
-        el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 3000);
+        const oldEl = document.getElementById('message');
+        if(!oldEl) return;
+        if (snackbarTimer) { clearTimeout(snackbarTimer); snackbarTimer = null; }
+        const newEl = oldEl.cloneNode(false);
+        oldEl.parentNode.replaceChild(newEl, oldEl);
+        newEl.textContent = msg;
+        newEl.className = `snackbar ${type}`;
+        newEl.style.display = 'block';
+        snackbarTimer = setTimeout(() => {
+            newEl.classList.add('hide');
+            newEl.addEventListener('animationend', () => { if(newEl.classList.contains('hide')) newEl.style.display = 'none'; }, {once:true});
+        }, 3000);
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-wrap')) {
+            event.target.style.display = 'none';
+        }
     }
 </script>
 </body>

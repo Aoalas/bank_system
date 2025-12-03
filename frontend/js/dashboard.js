@@ -1,9 +1,10 @@
-console.log('Dashboard JS v7.0');
+console.log('Dashboard JS v10.1 (Transfer Logic Fix)');
 
 let currentCardNumber = '';
 let userBalance = '0.00';
 let isBalanceHidden = true;
 let currentMessages = [];
+let snackbarTimer = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     currentCardNumber = sessionStorage.getItem('cardNumber');
@@ -14,9 +15,19 @@ document.addEventListener('DOMContentLoaded', function() {
     startClock();
     setGreeting();
     initializeDashboard();
+
+    // ★★★ 新增优化：当用户修改转账卡号输入框时，立即隐藏已查询到的姓名 ★★★
+    // 这能防止用户先查询了一个正确的卡号，然后修改了卡号却忘记再次查询，导致误以为转账对象还是原来那个人
+    const transferInput = document.getElementById('transferToCard');
+    if (transferInput) {
+        transferInput.addEventListener('input', function() {
+            document.getElementById('transferToName').innerText = '';
+            document.getElementById('transferNameDisplay').style.display = 'none';
+        });
+    }
 });
 
-
+// === 时间显示 ===
 function startClock() {
     const el = document.getElementById('sysTime');
     if (!el) {
@@ -26,27 +37,22 @@ function startClock() {
 
     function update() {
         const now = new Date();
-
-        // 日期部分：YYYY年MM月DD日
         const datePart = now.getFullYear() + '年' +
             String(now.getMonth() + 1).padStart(2, '0') + '月' +
             String(now.getDate()).padStart(2, '0') + '日';
-
-        // 时间部分：HH:mm (不含秒)
         const timePart = String(now.getHours()).padStart(2, '0') + ':' +
             String(now.getMinutes()).padStart(2, '0');
-
         el.textContent = `${datePart} ${timePart}`;
     }
-
-    update(); // 立即执行一次，防止页面只有 "--:--:--"
-    setInterval(update, 1000); // 每秒刷新，保证分钟跳变准确
+    update();
+    setInterval(update, 1000);
 }
-// === 随机问候语 ===
+
+
 function setGreeting() {
     const hour = new Date().getHours();
     let timeText = '';
-    if (hour < 6) timeText = '夜深了，辛苦了';
+    if (hour < 6) timeText = '夜深了，注意休息';
     else if (hour < 9) timeText = '早上好，元气满满';
     else if (hour < 12) timeText = '上午好，工作顺利';
     else if (hour < 14) timeText = '中午好，记得午休';
@@ -128,7 +134,7 @@ function toggleTransactions() {
     if(card) card.classList.toggle('expanded');
 }
 
-// === 交易记录显示逻辑（包含历史数据修正） ===
+//交易记录显示逻辑
 function renderTransactionItem(t) {
     let typeText = t.type;
     let isIn = false;
@@ -158,6 +164,7 @@ function renderTransactionItem(t) {
             typeText = '取款';
         }
     }
+
 
     const colorClass = isIn ? 'money-in' : 'money-out';
     const symbol = isIn ? '+' : '-';
@@ -357,7 +364,11 @@ function closeTransferModal() { document.getElementById('transferModal').style.d
 
 function resetTransferForm() {
     document.getElementById('transferToCard').value = '';
+
+    // 重置显示状态
     document.getElementById('transferNameDisplay').style.display = 'none';
+    document.getElementById('transferToName').innerText = '';
+
     document.getElementById('transferAmount').value = '';
     document.getElementById('transferMsg').value = '';
     document.getElementById('isAnonymous').checked = false;
@@ -374,6 +385,11 @@ function toggleAnon() {
 
 async function queryTransferName() {
     const card = document.getElementById('transferToCard').value;
+
+    // ★★★ 核心修复：查询前先清空旧结果 ★★★
+    document.getElementById('transferToName').innerText = '';
+    document.getElementById('transferNameDisplay').style.display = 'none';
+
     if (!card) return showMessage('请输入卡号', 'error');
     if (card === currentCardNumber) return showMessage('不能转账给自己', 'error');
     try {
