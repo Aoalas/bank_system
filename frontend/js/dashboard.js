@@ -52,7 +52,7 @@ function startClock() {
 function setGreeting() {
     const hour = new Date().getHours();
     let timeText = '';
-    if (hour < 6) timeText = '夜深了，注意休息';
+    if (hour < 6) timeText = '夜深了，辛苦了';
     else if (hour < 9) timeText = '早上好，元气满满';
     else if (hour < 12) timeText = '上午好，工作顺利';
     else if (hour < 14) timeText = '中午好，记得午休';

@@ -127,7 +127,7 @@ function validateForm(data) {
         return false;
     }
 
-    if (!data.card_number || data.card_number.length < 16) {
+    if (!data.card_number || data.card_number.length < 16 || data.card_number.length > 19) {
         showMessage('请输入有效的卡号', 'error');
         return false;
     }
@@ -164,7 +164,7 @@ async function submitRegistration(formData) {
         const result = await response.json();
 
         if (result.status === 'success') {
-            showMessage(`开户成功！您的卡号是: ${result.card_number}`, 'success');
+            showMessage(`开户成功！`, 'success');
 
             // 3秒后跳转到登录页面
             setTimeout(() => {

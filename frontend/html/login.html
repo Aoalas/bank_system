@@ -170,7 +170,7 @@
             });
             const ret = await res.json();
             if(ret.status === 'success') {
-                showToast('密码重置成功，请登录', 'success');
+                showToast('密码重置成功，请重新登录', 'success');
                 closeResetModal();
             } else {
                 showToast(ret.message || '验证失败，信息不匹配', 'error');
