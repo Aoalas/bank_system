@@ -17,7 +17,6 @@ private:
     std::recursive_mutex db_mutex;
 
     DatabaseManager();
-
     void connect();
 
 public:
@@ -43,12 +42,17 @@ public:
     std::string getUserMessages(const std::string& card_number);
     bool markMessageRead(int message_id);
     bool sendSystemMessage(const std::string& to_card, const std::string& title, const std::string& content);
-
-    // 新增：更新用户信息
     bool updateUserInfo(const std::string& cardNumber, const std::string& name, const std::string& idCard, const std::string& phone, const std::string& address);
 
+    // 密码管理
     bool verifyIdentity(const std::string& cardNumber, const std::string& name, const std::string& phone);
     bool updatePassword(const std::string& cardNumber, const std::string& newPassword);
+
+    // === 新增：注销功能 ===
+    // 验证销户信息并返回余额
+    bool checkAccountForDeletion(const std::string& cardNumber, const std::string& name, const std::string& phone, double& outBalance);
+    // 执行彻底删除
+    bool deleteAccount(const std::string& cardNumber);
 
     DatabaseManager(const DatabaseManager&) = delete;
     DatabaseManager& operator=(const DatabaseManager&) = delete;

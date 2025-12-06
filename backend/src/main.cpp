@@ -136,6 +136,33 @@ int main() {
         return crow::response(200, "{\"status\":\"error\",\"message\":\"身份信息验证失败\"}");
     });
 
+    // === 新增：销户验证 ===
+    CROW_ROUTE(app, "/api/account/check").methods("POST"_method)([](const crow::request& req) {
+        auto json = crow::json::load(req.body);
+        std::string card = json["card_number"].s();
+
+        double balance = 0.0;
+        bool ok = DatabaseManager::getInstance().checkAccountForDeletion(
+            card, json["name"].s(), json["phone"].s(), balance
+        );
+
+        if (ok) {
+            crow::json::wvalue res;
+            res["status"] = "success";
+            res["balance"] = balance;
+            return crow::response(200, res);
+        }
+        return crow::response(200, "{\"status\":\"error\",\"message\":\"信息不匹配\"}");
+    });
+
+    // === 新增：执行销户 ===
+    CROW_ROUTE(app, "/api/account/delete").methods("POST"_method)([](const crow::request& req) {
+        auto json = crow::json::load(req.body);
+        std::string card = json["card_number"].s();
+        bool success = DatabaseManager::getInstance().deleteAccount(card);
+        return crow::response(200, success ? "{\"status\":\"success\"}" : "{\"status\":\"error\"}");
+    });
+
     CROW_ROUTE(app, "/api/balance/<string>")
     ([](const std::string& card_number) {
         double balance = DatabaseManager::getInstance().getBalance(card_number);

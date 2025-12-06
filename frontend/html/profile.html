@@ -22,9 +22,14 @@
                     <p style="margin: 4px 0 0; font-size: 14px; color: var(--anzhiyu-secondtext);">User Profile</p>
                 </div>
             </div>
-            <button class="btn btn-outline" onclick="window.location.href='/dashboard.html'" style="width: auto; padding: 10px 25px; border-radius: 50px;">
-                <i class="fas fa-arrow-left"></i> <span style="margin-left: 8px;">返回面板</span>
-            </button>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-outline" onclick="window.location.href='/delete_account.html'" style="width: auto; padding: 8px 15px; border-radius: 50px; border-color: var(--danger); color: var(--danger); font-size: 13px;">
+                    <i class="fas fa-trash-alt"></i> 注销账户
+                </button>
+                <button class="btn btn-outline" onclick="window.location.href='/dashboard.html'" style="width: auto; padding: 10px 25px; border-radius: 50px;">
+                    <i class="fas fa-arrow-left"></i> <span style="margin-left: 8px;">返回面板</span>
+                </button>
+            </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 60px;">

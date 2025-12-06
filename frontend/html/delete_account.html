@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注销账户 | 银行储蓄系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<canvas id="universe"></canvas>
+
+<div class="page-center">
+    <div class="geek-card" style="width: 100%; max-width: 480px; padding: 40px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 60px; height: 60px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 15px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 style="margin: 0; font-size: 24px; color: var(--anzhiyu-fontcolor);">注销账户</h2>
+            <p style="margin: 8px 0 0; font-size: 13px; color: var(--anzhiyu-secondtext);">此操作不可逆，请谨慎操作</p>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="delCard" placeholder=" " readonly>
+            <label>当前卡号</label>
+        </div>
+        <div class="input-group">
+            <input type="text" id="delName" placeholder=" ">
+            <label>真实姓名</label>
+        </div>
+        <div class="input-group">
+            <input type="text" id="delPhone" placeholder=" " maxlength="11">
+            <label>预留手机号</label>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button class="btn btn-outline" onclick="history.back()" style="flex: 1;">取消</button>
+            <button class="btn btn-primary" onclick="verifyAndDelete()" style="flex: 1; background: var(--danger);">下一步</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirmDeleteModal" class="modal-wrap" style="z-index: 2000;">
+    <div class="modal-inner">
+        <div style="text-align: center;">
+            <i class="fas fa-skull-crossbones" style="font-size: 40px; color: var(--danger); margin-bottom: 20px;"></i>
+            <h3 style="margin-bottom: 10px;">确定要永久注销吗？</h3>
+
+            <div id="balanceWarning" style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); border-radius: 8px; padding: 15px; margin: 20px 0; text-align: left; display: none;">
+                <p style="color: var(--danger); font-weight: bold; font-size: 14px; margin-bottom: 5px;">⚠️ 警告：账户仍有余额！</p>
+                <p style="color: var(--anzhiyu-fontcolor); font-size: 13px; line-height: 1.5;">当前余额：<span id="delBalanceVal" style="font-weight: bold;"></span><br>注销后资金将无法找回，建议您先取款或转账。</p>
+            </div>
+
+            <p style="color: var(--anzhiyu-secondtext); font-size: 13px;">账号：<span id="confirmCardNum" style="color: var(--anzhiyu-fontcolor);"></span><br>姓名：<span id="confirmNameVal" style="color: var(--anzhiyu-fontcolor);"></span></p>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn btn-outline" onclick="closeConfirmModal()">取消</button>
+                <button id="finalDeleteBtn" class="btn btn-primary" style="background: var(--anzhiyu-secondtext); cursor: not-allowed;" disabled>确定 (5)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="message" class="snackbar"></div>
+<script src="/js/delete_account.js"></script>
+<script>
+    const canvas = document.getElementById('universe');
+    const ctx = canvas.getContext('2d');
+    let width, height, stars = [];
+    function init() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; stars=[]; for(let i=0;i<80;i++){stars.push({x:Math.random()*width,y:Math.random()*height,size:Math.random()*2,speed:Math.random()*0.5});} }
+    function animate() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill();s.y-=s.speed;if(s.y<0)s.y=height;}); requestAnimationFrame(animate); }
+    window.addEventListener('resize', init); init(); animate();
+
+    // 自动填充卡号
+    document.getElementById('delCard').value = sessionStorage.getItem('cardNumber') || '';
+</script>
+</body>
+</html>

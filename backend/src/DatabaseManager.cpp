@@ -33,7 +33,6 @@ DatabaseManager& DatabaseManager::getInstance() {
 
 void DatabaseManager::connect() {
     try {
-        // ★★★ 请确保这里的密码和你的数据库一致 ★★★
         connection.reset(driver->connect("tcp://127.0.0.1:3306", "bank_admin", "BankAdmin123!"));
         connection->setSchema("bank_system");
         std::cout << "数据库连接成功!" << std::endl;
@@ -46,7 +45,7 @@ bool DatabaseManager::isConnected() {
     return connection && !connection->isClosed();
 }
 
-// 1. 登录
+
 bool DatabaseManager::verifyLogin(const std::string& cardNumber, const std::string& password) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -62,7 +61,6 @@ bool DatabaseManager::verifyLogin(const std::string& cardNumber, const std::stri
     } catch (...) { return false; }
 }
 
-// 2. 用户信息
 std::string DatabaseManager::getUserInfo(const std::string& cardNumber) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -73,7 +71,6 @@ std::string DatabaseManager::getUserInfo(const std::string& cardNumber) {
         );
         pstmt->setString(1, cardNumber);
         std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
-
         if (res->next()) {
             std::stringstream ss;
             ss << "{\"status\":\"success\","
@@ -90,15 +87,12 @@ std::string DatabaseManager::getUserInfo(const std::string& cardNumber) {
     } catch (...) { return "{\"status\":\"error\",\"message\":\"数据库错误\"}"; }
 }
 
-// 3. 余额
 double DatabaseManager::getBalance(const std::string& cardNumber) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
         if (!isConnected()) connect();
         if (!connection) return -1.0;
-        std::unique_ptr<sql::PreparedStatement> pstmt(
-            connection->prepareStatement("SELECT balance FROM cards WHERE card_number = ?")
-        );
+        std::unique_ptr<sql::PreparedStatement> pstmt(connection->prepareStatement("SELECT balance FROM cards WHERE card_number = ?"));
         pstmt->setString(1, cardNumber);
         std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
         if (res->next()) return res->getDouble("balance");
@@ -106,16 +100,13 @@ double DatabaseManager::getBalance(const std::string& cardNumber) {
     } catch (...) { return -1.0; }
 }
 
-// 4. 存款
 bool DatabaseManager::deposit(const std::string& cardNumber, double amount) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
         if (!isConnected()) connect();
         if (!connection) return false;
         connection->setAutoCommit(false);
-
-        int cardId = 0;
-        double newBalance = 0.0;
+        int cardId = 0; double newBalance = 0.0;
         {
             std::unique_ptr<sql::PreparedStatement> upd(connection->prepareStatement("UPDATE cards SET balance = balance + ? WHERE card_number = ?"));
             upd->setDouble(1, amount); upd->setString(2, cardNumber);
@@ -138,7 +129,6 @@ bool DatabaseManager::deposit(const std::string& cardNumber, double amount) {
     }
 }
 
-// 5. 取款
 bool DatabaseManager::withdraw(const std::string& cardNumber, double amount) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -168,7 +158,6 @@ bool DatabaseManager::withdraw(const std::string& cardNumber, double amount) {
     }
 }
 
-// 6. 交易记录
 std::string DatabaseManager::getTransactionHistory(const std::string& cardNumber) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -189,7 +178,6 @@ std::string DatabaseManager::getTransactionHistory(const std::string& cardNumber
     } catch (...) { return "{\"status\":\"error\"}"; }
 }
 
-// 7. 检查卡号
 bool DatabaseManager::isCardNumberExists(const std::string& cardNumber) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -202,7 +190,6 @@ bool DatabaseManager::isCardNumberExists(const std::string& cardNumber) {
     } catch (...) { return false; }
 }
 
-// 8. 开户
 bool DatabaseManager::createAccount(const std::string& name, const std::string& idCard,
                                   const std::string& phone, const std::string& address,
                                   const std::string& cardNumber, const std::string& password,
@@ -213,33 +200,27 @@ bool DatabaseManager::createAccount(const std::string& name, const std::string& 
         if (!connection) return false;
         connection->setAutoCommit(false);
         if (isCardNumberExists(cardNumber)) throw sql::SQLException("Exists");
-
         std::unique_ptr<sql::PreparedStatement> user(connection->prepareStatement("INSERT INTO users (name, id_card, phone, address) VALUES (?, ?, ?, ?)"));
         user->setString(1, name); user->setString(2, idCard); user->setString(3, phone); user->setString(4, address);
         user->executeUpdate();
-
         int uid = 0;
         {
             std::unique_ptr<sql::Statement> stmt(connection->createStatement());
             std::unique_ptr<sql::ResultSet> uidRes(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
             uidRes->next(); uid = uidRes->getInt(1);
         }
-
         std::unique_ptr<sql::PreparedStatement> card(connection->prepareStatement("INSERT INTO cards (user_id, card_number, password_hash, balance) VALUES (?, ?, MD5(?), ?)"));
         card->setInt(1, uid); card->setString(2, cardNumber); card->setString(3, password); card->setDouble(4, initialDeposit);
         card->executeUpdate();
-
         int cid = 0;
         {
             std::unique_ptr<sql::Statement> stmt(connection->createStatement());
             std::unique_ptr<sql::ResultSet> cidRes(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
             cidRes->next(); cid = cidRes->getInt(1);
         }
-
         std::unique_ptr<sql::PreparedStatement> trans(connection->prepareStatement("INSERT INTO transactions (card_id, type, amount, balance_after, description) VALUES (?, 'open', ?, ?, '开户')"));
         trans->setInt(1, cid); trans->setDouble(2, initialDeposit); trans->setDouble(3, initialDeposit);
         trans->executeUpdate();
-
         connection->commit(); connection->setAutoCommit(true);
         return true;
     } catch (...) {
@@ -248,7 +229,6 @@ bool DatabaseManager::createAccount(const std::string& name, const std::string& 
     }
 }
 
-// 9. 转账
 bool DatabaseManager::transfer(const std::string& from_card, const std::string& to_card, double amount, const std::string& message, bool is_anonymous) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     if (from_card == to_card || amount <= 0) return false;
@@ -268,7 +248,6 @@ bool DatabaseManager::transfer(const std::string& from_card, const std::string& 
             if (rs->getDouble("balance") < amount) throw sql::SQLException("余额不足");
             srcId = rs->getInt("card_id");
         }
-
         {
             std::unique_ptr<sql::PreparedStatement> dst(connection->prepareStatement("SELECT card_id FROM cards WHERE card_number = ?"));
             dst->setString(1, to_card);
@@ -276,24 +255,17 @@ bool DatabaseManager::transfer(const std::string& from_card, const std::string& 
             if (!rd->next()) throw sql::SQLException("收款人不存在");
             dstId = rd->getInt("card_id");
         }
-
         std::unique_ptr<sql::PreparedStatement> upd1(connection->prepareStatement("UPDATE cards SET balance = balance - ? WHERE card_id = ?"));
         upd1->setDouble(1, amount); upd1->setInt(2, srcId); upd1->executeUpdate();
-
         std::unique_ptr<sql::PreparedStatement> upd2(connection->prepareStatement("UPDATE cards SET balance = balance + ? WHERE card_id = ?"));
         upd2->setDouble(1, amount); upd2->setInt(2, dstId); upd2->executeUpdate();
-
-        // 记录流水 - 使用标准类型 withdraw/deposit
         std::unique_ptr<sql::PreparedStatement> log1(connection->prepareStatement("INSERT INTO transactions (card_id, type, amount, balance_after, description) VALUES (?, 'withdraw', ?, (SELECT balance FROM cards WHERE card_id=?), ?)"));
         log1->setInt(1, srcId); log1->setDouble(2, amount); log1->setInt(3, srcId); log1->setString(4, "转账给 " + to_card); log1->executeUpdate();
-
         std::string sName = is_anonymous ? "匿名用户" : getUserName(from_card);
         std::unique_ptr<sql::PreparedStatement> log2(connection->prepareStatement("INSERT INTO transactions (card_id, type, amount, balance_after, description) VALUES (?, 'deposit', ?, (SELECT balance FROM cards WHERE card_id=?), ?)"));
         log2->setInt(1, dstId); log2->setDouble(2, amount); log2->setInt(3, dstId); log2->setString(4, "收到 " + sName + " 转账"); log2->executeUpdate();
-
         std::unique_ptr<sql::PreparedStatement> msg(connection->prepareStatement("INSERT INTO messages (recipient_card, sender_name, type, amount, content) VALUES (?, ?, 'transfer', ?, ?)"));
         msg->setString(1, to_card); msg->setString(2, sName); msg->setDouble(3, amount); msg->setString(4, message); msg->executeUpdate();
-
         connection->commit(); connection->setAutoCommit(true);
         return true;
     } catch (sql::SQLException& e) {
@@ -303,7 +275,6 @@ bool DatabaseManager::transfer(const std::string& from_card, const std::string& 
     }
 }
 
-// 10. 获取姓名
 std::string DatabaseManager::getUserName(const std::string& card_number) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -317,7 +288,6 @@ std::string DatabaseManager::getUserName(const std::string& card_number) {
     } catch (...) { return ""; }
 }
 
-// 11. 获取消息
 std::string DatabaseManager::getUserMessages(const std::string& card_number) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -341,7 +311,6 @@ std::string DatabaseManager::getUserMessages(const std::string& card_number) {
     } catch (...) { return "{\"status\":\"error\"}"; }
 }
 
-// 12. 标记已读
 bool DatabaseManager::markMessageRead(int message_id) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -353,7 +322,6 @@ bool DatabaseManager::markMessageRead(int message_id) {
     } catch (...) { return false; }
 }
 
-// 13. 发送系统消息
 bool DatabaseManager::sendSystemMessage(const std::string& to_card, const std::string& title, const std::string& content) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -365,7 +333,6 @@ bool DatabaseManager::sendSystemMessage(const std::string& to_card, const std::s
     } catch (...) { return false; }
 }
 
-// 14. 更新用户信息
 bool DatabaseManager::updateUserInfo(const std::string& cardNumber, const std::string& name, const std::string& idCard, const std::string& phone, const std::string& address) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -398,7 +365,6 @@ bool DatabaseManager::updateUserInfo(const std::string& cardNumber, const std::s
     }
 }
 
-// 15. 验证身份 (忘记密码)
 bool DatabaseManager::verifyIdentity(const std::string& cardNumber, const std::string& name, const std::string& phone) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -413,7 +379,6 @@ bool DatabaseManager::verifyIdentity(const std::string& cardNumber, const std::s
     } catch (...) { return false; }
 }
 
-// 16. 修改密码 (使用MD5加密)
 bool DatabaseManager::updatePassword(const std::string& cardNumber, const std::string& newPassword) {
     std::lock_guard<std::recursive_mutex> lock(db_mutex);
     try {
@@ -423,4 +388,86 @@ bool DatabaseManager::updatePassword(const std::string& cardNumber, const std::s
         p->setString(1, newPassword); p->setString(2, cardNumber);
         return p->executeUpdate() > 0;
     } catch (...) { return false; }
+}
+
+bool DatabaseManager::checkAccountForDeletion(const std::string& cardNumber, const std::string& name, const std::string& phone, double& outBalance) {
+    std::lock_guard<std::recursive_mutex> lock(db_mutex);
+    try {
+        if (!isConnected()) connect();
+        if (!connection) return false;
+
+        // 验证卡号、姓名、手机号是否匹配
+        std::unique_ptr<sql::PreparedStatement> p(connection->prepareStatement(
+            "SELECT c.balance FROM cards c JOIN users u ON c.user_id = u.user_id WHERE c.card_number = ? AND u.name = ? AND u.phone = ?"
+        ));
+        p->setString(1, cardNumber);
+        p->setString(2, name);
+        p->setString(3, phone);
+
+        std::unique_ptr<sql::ResultSet> rs(p->executeQuery());
+        if (rs->next()) {
+            outBalance = rs->getDouble("balance");
+            return true;
+        }
+        return false;
+    } catch (...) { return false; }
+}
+
+// === 新增：执行销户 ===
+bool DatabaseManager::deleteAccount(const std::string& cardNumber) {
+    std::lock_guard<std::recursive_mutex> lock(db_mutex);
+    try {
+        if (!isConnected()) connect();
+        if (!connection) return false;
+
+        connection->setAutoCommit(false);
+
+        // 1. 获取用户ID和卡ID
+        int userId = 0;
+        int cardId = 0;
+        {
+            std::unique_ptr<sql::PreparedStatement> sel(connection->prepareStatement("SELECT card_id, user_id FROM cards WHERE card_number = ? FOR UPDATE"));
+            sel->setString(1, cardNumber);
+            std::unique_ptr<sql::ResultSet> rs(sel->executeQuery());
+            if (!rs->next()) throw sql::SQLException("Not Found");
+            cardId = rs->getInt("card_id");
+            userId = rs->getInt("user_id");
+        }
+
+        // 2. 删除关联的消息
+        {
+            std::unique_ptr<sql::PreparedStatement> delMsg(connection->prepareStatement("DELETE FROM messages WHERE recipient_card = ?"));
+            delMsg->setString(1, cardNumber);
+            delMsg->executeUpdate();
+        }
+
+        // 3. 删除关联的交易记录
+        {
+            std::unique_ptr<sql::PreparedStatement> delTrans(connection->prepareStatement("DELETE FROM transactions WHERE card_id = ?"));
+            delTrans->setInt(1, cardId);
+            delTrans->executeUpdate();
+        }
+
+        // 4. 删除卡片
+        {
+            std::unique_ptr<sql::PreparedStatement> delCard(connection->prepareStatement("DELETE FROM cards WHERE card_id = ?"));
+            delCard->setInt(1, cardId);
+            delCard->executeUpdate();
+        }
+
+        // 5. 删除用户 (假定是一人一卡模式，直接删除用户)
+        {
+            std::unique_ptr<sql::PreparedStatement> delUser(connection->prepareStatement("DELETE FROM users WHERE user_id = ?"));
+            delUser->setInt(1, userId);
+            delUser->executeUpdate();
+        }
+
+        connection->commit();
+        connection->setAutoCommit(true);
+        return true;
+    } catch (sql::SQLException& e) {
+        std::cerr << "Delete Error: " << e.what() << std::endl;
+        if(connection) try{connection->rollback(); connection->setAutoCommit(true);}catch(...){}
+        return false;
+    }
 }
