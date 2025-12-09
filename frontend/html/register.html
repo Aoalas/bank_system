@@ -91,14 +91,14 @@
         el.textContent = msg;
         el.className = `snackbar ${type}`;
         el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 3000);
+        setTimeout(() => el.style.display = 'none', 3000);    const canvas = document.getElementById('universe');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        function init() { width=window.innerWidth;
     }
 
     // 动态星空背景
-    const canvas = document.getElementById('universe');
-    const ctx = canvas.getContext('2d');
-    let width, height, stars = [];
-    function init() { width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; stars=[]; for(let i=0;i<80;i++){stars.push({x:Math.random()*width,y:Math.random()*height,size:Math.random()*2,speed:Math.random()*0.5});} }
+ height=window.innerHeight; canvas.width=width; canvas.height=height; stars=[]; for(let i=0;i<80;i++){stars.push({x:Math.random()*width,y:Math.random()*height,size:Math.random()*2,speed:Math.random()*0.5});} }
     function animate() { ctx.clearRect(0,0,width,height); ctx.fillStyle="rgba(255,255,255,0.8)"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill();s.y-=s.speed;if(s.y<0)s.y=height;}); requestAnimationFrame(animate); }
     window.addEventListener('resize', init); init(); animate();
 </script>
